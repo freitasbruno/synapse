@@ -23,31 +23,33 @@ export function useTheme(): ThemeContextValue {
   return ctx
 }
 
-export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('dark')
-
-  // On mount: read persisted preference or default to dark
-  useEffect(() => {
-    const stored = localStorage.getItem('synapse-theme') as Theme | null
-    const resolved = stored ?? 'dark'
-    setTheme(resolved)
-    applyTheme(resolved)
-  }, [])
-
-  function applyTheme(next: Theme) {
-    const root = document.documentElement
-    if (next === 'dark') {
-      root.classList.add('dark')
-    } else {
-      root.classList.remove('dark')
-    }
+// Applies .dark / removes .dark on <html>. Defined outside the component
+// so it is a stable reference that the React Compiler can reason about.
+function applyTheme(next: Theme) {
+  const root = document.documentElement
+  if (next === 'dark') {
+    root.classList.add('dark')
+  } else {
+    root.classList.remove('dark')
   }
+}
 
-  function toggleTheme() {
+export function ThemeProvider({ children }: { children: ReactNode }) {
+  // Lazy initializer reads localStorage only on the client.
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (typeof window === 'undefined') return 'dark'
+    return (localStorage.getItem('synapse-theme') as Theme | null) ?? 'dark'
+  })
+
+  // Sync the class on the <html> element to match the initial theme.
+  useEffect(() => {
+    applyTheme(theme)
+  }, [theme])
+
+  const toggleTheme = () => {
     setTheme((prev) => {
       const next: Theme = prev === 'dark' ? 'light' : 'dark'
       localStorage.setItem('synapse-theme', next)
-      applyTheme(next)
       return next
     })
   }
