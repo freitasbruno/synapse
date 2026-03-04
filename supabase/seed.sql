@@ -189,3 +189,82 @@ INSERT INTO assets (
   false, 0,
   now() - INTERVAL '15 days'
 );
+
+-- =============================================================
+-- DESCRIPTION SEQUENCES (4 selected assets)
+-- =============================================================
+
+-- Asset 1: Chain-of-Thought Math Tutor (text blocks with code)
+UPDATE assets SET description_sequence = '[
+  {
+    "type": "text",
+    "content": "## Overview\n\nThis prompt engineers an LLM to **show its reasoning explicitly** at every step of a maths problem — not just produce an answer. It is modelled after the chain-of-thought (CoT) technique introduced by Wei et al. (2022) and consistently improves accuracy on multi-step problems.\n\n> Works best with models that have strong instruction-following ability: GPT-4, Claude 3.5+, Gemini 1.5 Pro."
+  },
+  {
+    "type": "text",
+    "content": "## The Prompt\n\n```text\nYou are a patient maths tutor. When given a problem:\n1. Restate the problem in your own words.\n2. Identify what is being asked and what information is given.\n3. Choose a solution strategy and explain why.\n4. Work through each step, labelling it clearly (Step 1, Step 2 …).\n5. State the final answer in a box: **Answer: [value]**\n6. Do a quick sanity-check — does the answer make sense?\n\nDo NOT skip steps even if the problem seems trivial.\n```"
+  },
+  {
+    "type": "text",
+    "content": "## Python Integration\n\nYou can wire this prompt into any OpenAI-compatible API:\n\n```python\nimport openai\n\nSYSTEM_PROMPT = \"\"\"\nYou are a patient maths tutor. When given a problem:\n1. Restate the problem in your own words.\n2. Identify what is being asked and what information is given.\n3. Choose a solution strategy and explain why.\n4. Work through each step, labelling it clearly.\n5. State the final answer in a box: **Answer: [value]**\n6. Sanity-check the result.\n\"\"\"\n\ndef solve(problem: str) -> str:\n    response = openai.chat.completions.create(\n        model=\"gpt-4o\",\n        messages=[\n            {\"role\": \"system\", \"content\": SYSTEM_PROMPT},\n            {\"role\": \"user\",   \"content\": problem},\n        ],\n        temperature=0.2,   # low temp for deterministic reasoning\n    )\n    return response.choices[0].message.content\n\nif __name__ == \"__main__\":\n    print(solve(\"A train travels 120 km in 1.5 hours. What is its average speed?\"))\n```"
+  },
+  {
+    "type": "text",
+    "content": "## Tips & Variations\n\n- **Temperature** — Keep it at 0.0–0.3 for consistent step-by-step output.\n- **Few-shot variant** — Prepend 2–3 worked examples before the user question to further anchor the format.\n- **Self-consistency** — Sample the same question 5 times and take the majority answer for higher-stakes scenarios.\n- **Multilingual** — The prompt works in any language; just write the instruction in the target language.\n\n### Benchmarks\n\n| Model | GSM8K (0-shot) | GSM8K (CoT) |\n|---|---|---|\n| GPT-3.5 | 57% | 78% |\n| GPT-4 | 82% | 97% |\n| Claude 3.5 Sonnet | 88% | 98% |"
+  }
+]'::jsonb
+WHERE id = 'a0000000-0000-0000-0000-000000000001';
+
+-- Asset 4: GitHub PR Auto-Summarizer (text + image + text)
+UPDATE assets SET description_sequence = '[
+  {
+    "type": "text",
+    "content": "## What It Does\n\nPaste a raw GitHub pull request diff and the tool returns a **structured, reviewer-ready summary** in under five seconds. It extracts:\n\n- A one-sentence TL;DR\n- Files changed and their purpose\n- Risk areas and suggested test cases\n- Reviewer focus checklist\n\nThe output format is Markdown, suitable for pasting directly into a PR comment or a Slack message."
+  },
+  {
+    "type": "image",
+    "url": "https://placehold.co/800x450/1a1a1a/6366f1?text=PR+Summary+Output",
+    "caption": "Example output for a 12-file refactoring PR — generated in ~3 seconds"
+  },
+  {
+    "type": "text",
+    "content": "## Usage\n\nCopy the diff output from GitHub (or `git diff main...feature-branch`) and paste it after the instruction below.\n\n```text\nYou are a senior software engineer performing a code review.\nGiven the following pull request diff, produce:\n\n1. **TL;DR** (1 sentence)\n2. **Changes summary** — bullet list, grouped by file or concern\n3. **Risk areas** — anything that could break in production\n4. **Suggested tests** — what the reviewer should manually verify\n5. **Reviewer checklist** — 3–5 actionable items\n\nFormat your response in clean Markdown.\n\n---DIFF---\n[paste diff here]\n```\n\n## Integration with GitHub Actions\n\n```yaml\n# .github/workflows/pr-summary.yml\nname: PR Summary\non:\n  pull_request:\n    types: [opened, synchronize]\n\njobs:\n  summarize:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n        with:\n          fetch-depth: 0\n\n      - name: Generate diff\n        run: git diff origin/main...HEAD > /tmp/pr.diff\n\n      - name: Post summary\n        env:\n          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}\n          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}\n        run: |\n          python scripts/summarize_pr.py /tmp/pr.diff\n```"
+  }
+]'::jsonb
+WHERE id = 'a0000000-0000-0000-0000-000000000004';
+
+-- Asset 7: AI Mock Interview Coach (text + video + text)
+UPDATE assets SET description_sequence = '[
+  {
+    "type": "text",
+    "content": "## How the Coach Works\n\nThe AI Mock Interview Coach simulates a full 45-minute technical interview loop. It adapts question difficulty in real time based on your previous answers — if you nail a question, the next one is harder; if you struggle, it offers a hint before escalating.\n\n### Interview Modes\n\n| Mode | Duration | Focus |\n|---|---|---|\n| Warm-up | 10 min | Easy LC-style problems |\n| Standard | 30 min | Medium algorithms + system design |\n| FAANG Prep | 60 min | Hard problems + behavioural |\n| Behavioural only | 20 min | STAR-format soft-skill questions |"
+  },
+  {
+    "type": "video",
+    "url": "https://www.w3schools.com/html/mov_bbb.mp4",
+    "caption": "Demo: 2-minute walkthrough of a Standard mode session"
+  },
+  {
+    "type": "text",
+    "content": "## Example Session Transcript\n\n```\nCoach: Let''s start with a warm-up. Given an array of integers, return\n       the indices of the two numbers that add up to a target.\n\nYou:   I''ll use a hash map. For each element I store its complement...\n\nCoach: Good — O(n) time. Now handle duplicates in the input array.\n\nYou:   If the same value appears twice, I need to check the index isn''t\n       the same as the stored one...\n\nCoach: Exactly right. Here''s a follow-up: what if the array is sorted?\n       Can you do better than O(n) space?\n```\n\n## Performance Report (sample)\n\nAfter each session you receive:\n\n- **Score** per question (correctness, time, communication)\n- **Identified gaps** (e.g. \"Struggles with graph traversal\")\n- **Recommended study topics** with links\n- **Transcript** for self-review"
+  }
+]'::jsonb
+WHERE id = 'a0000000-0000-0000-0000-000000000007';
+
+-- Asset 10: Blog Post Generation Pipeline (text + image + text)
+UPDATE assets SET description_sequence = '[
+  {
+    "type": "text",
+    "content": "## Pipeline Overview\n\nThis multi-step workflow turns a **topic + audience** pair into a publish-ready blog post in four stages:\n\n1. **Research** — web search + source synthesis\n2. **Outline** — SEO-optimised H2/H3 structure with keyword targets\n3. **Draft** — full prose with examples, analogies, and data\n4. **Polish** — tone, readability score, meta description, social previews\n\nEach stage can be run independently or chained end-to-end."
+  },
+  {
+    "type": "image",
+    "url": "https://placehold.co/800x450/0f0f0f/6366f1?text=Pipeline+Diagram",
+    "caption": "Four-stage pipeline from topic to publish-ready post"
+  },
+  {
+    "type": "text",
+    "content": "## Stage Prompts\n\n### Stage 1 — Research\n\n```text\nTopic: {topic}\nTarget audience: {audience}\nGoal: Identify the 5 most important sub-topics, key statistics, and\n      authoritative sources. Output as structured JSON:\n{\n  \"sub_topics\": [...],\n  \"key_stats\":  [...],\n  \"sources\":    [...]\n}\n```\n\n### Stage 2 — Outline\n\n```text\nGiven the research below, create an SEO-optimised blog post outline.\nPrimary keyword: {primary_kw}\nSecondary keywords: {secondary_kws}\n\nRequirements:\n- H1 title (include primary keyword)\n- Introduction hook (question or statistic)\n- 4–6 H2 sections with H3 sub-points\n- Conclusion with CTA\n- Estimated word count per section\n```\n\n### Stage 4 — Polish\n\n```text\nReview the draft below and:\n1. Improve any passive-voice sentences\n2. Replace jargon with plain language where possible\n3. Add a meta description (150–160 chars, include primary keyword)\n4. Write 3 social preview variants (Twitter, LinkedIn, newsletter)\n5. Rate readability: Flesch–Kincaid grade level target ≤ 10\n```\n\n## Supported Output Formats\n\n- `markdown` — clean `.md` file ready for any CMS\n- `notion` — Notion API block format\n- `wordpress` — Gutenberg-compatible JSON blocks\n- `html` — standalone article with semantic tags"
+  }
+]'::jsonb
+WHERE id = 'a0000000-0000-0000-0000-000000000010';
