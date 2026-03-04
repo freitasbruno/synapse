@@ -9,6 +9,13 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(`${origin}/?error=auth_error`)
   }
 
+  // Password reset — forward the code to the client-side reset page so it
+  // can exchange it there. Do NOT exchange it here (codes are single-use).
+  const type = searchParams.get('type')
+  if (type === 'recovery') {
+    return NextResponse.redirect(`${origin}/auth/reset-password?code=${code}`)
+  }
+
   const supabase = await createClient()
   const { data, error } = await supabase.auth.exchangeCodeForSession(code)
 

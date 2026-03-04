@@ -57,16 +57,6 @@ export function HeaderClient({ user }: HeaderClientProps) {
     return () => document.removeEventListener('mousedown', handleClick)
   }, [dropdownOpen])
 
-  async function handleSignIn() {
-    const supabase = createClient()
-    await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
-    })
-  }
-
   async function handleSignOut() {
     setDropdownOpen(false)
     const supabase = createClient()
@@ -77,13 +67,13 @@ export function HeaderClient({ user }: HeaderClientProps) {
 
   if (!user) {
     return (
-      <button
-        onClick={() => void handleSignIn()}
+      <Link
+        href="/auth/signin"
         style={{ backgroundColor: 'var(--accent)', color: '#ffffff' }}
         className="rounded-md px-4 py-1.5 text-sm font-medium transition-opacity hover:opacity-90"
       >
         Sign In
-      </button>
+      </Link>
     )
   }
 
