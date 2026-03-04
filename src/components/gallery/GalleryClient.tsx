@@ -24,11 +24,13 @@ function buildQs(params: {
   search: string
   type: AssetType
   sort: SortOrder
+  tags: string[]
 }): string {
   const p = new URLSearchParams()
-  if (params.search)           p.set('search', params.search)
-  if (params.type !== 'all')   p.set('type',   params.type)
-  if (params.sort !== 'newest') p.set('sort',  params.sort)
+  if (params.search)            p.set('search', params.search)
+  if (params.type !== 'all')    p.set('type',   params.type)
+  if (params.sort !== 'newest') p.set('sort',   params.sort)
+  if (params.tags.length > 0)   p.set('tags',   params.tags.join(','))
   return p.toString()
 }
 
@@ -56,17 +58,19 @@ function XIcon() {
 
 interface GalleryClientProps {
   assets: AssetPreview[]
+  allTags: string[]
 }
 
-export function GalleryClient({ assets }: GalleryClientProps) {
-  const router     = useRouter()
-  const pathname   = usePathname()
+export function GalleryClient({ assets, allTags }: GalleryClientProps) {
+  const router       = useRouter()
+  const pathname     = usePathname()
   const searchParams = useSearchParams()
 
-  // URL is source of truth for type + sort.
+  // URL is source of truth for type, sort, and tags.
   // Local state owns the search input for immediate responsiveness.
-  const typeFilter = (searchParams.get('type') ?? 'all') as AssetType
-  const sortOrder  = (searchParams.get('sort') ?? 'newest') as SortOrder
+  const typeFilter   = (searchParams.get('type') ?? 'all') as AssetType
+  const sortOrder    = (searchParams.get('sort') ?? 'newest') as SortOrder
+  const selectedTags = searchParams.get('tags')?.split(',').filter(Boolean) ?? []
   const [inputValue, setInputValue] = useState(
     () => searchParams.get('search') ?? ''
   )
@@ -74,7 +78,7 @@ export function GalleryClient({ assets }: GalleryClientProps) {
   // Debounce: push search value to URL 300 ms after the user stops typing.
   useEffect(() => {
     const timer = setTimeout(() => {
-      // Read the current URL params at fire-time to avoid stale closure issues.
+      // Read current URL params at fire-time to preserve tags/type/sort.
       const current = new URLSearchParams(window.location.search)
       if (inputValue) current.set('search', inputValue)
       else current.delete('search')
@@ -89,12 +93,25 @@ export function GalleryClient({ assets }: GalleryClientProps) {
   // ── URL-update helpers ──────────────────────────────────────────────────────
 
   function setType(type: AssetType) {
-    const qs = buildQs({ search: inputValue, type, sort: sortOrder })
+    const qs = buildQs({ search: inputValue, type, sort: sortOrder, tags: selectedTags })
     router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false })
   }
 
   function setSort(sort: SortOrder) {
-    const qs = buildQs({ search: inputValue, type: typeFilter, sort })
+    const qs = buildQs({ search: inputValue, type: typeFilter, sort, tags: selectedTags })
+    router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false })
+  }
+
+  function toggleTag(tag: string) {
+    const next = selectedTags.includes(tag)
+      ? selectedTags.filter((t) => t !== tag)
+      : [...selectedTags, tag]
+    const qs = buildQs({ search: inputValue, type: typeFilter, sort: sortOrder, tags: next })
+    router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false })
+  }
+
+  function clearTags() {
+    const qs = buildQs({ search: inputValue, type: typeFilter, sort: sortOrder, tags: [] })
     router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false })
   }
 
@@ -106,7 +123,7 @@ export function GalleryClient({ assets }: GalleryClientProps) {
   // ── derived state ───────────────────────────────────────────────────────────
 
   const isNonDefault =
-    inputValue !== '' || typeFilter !== 'all' || sortOrder !== 'newest'
+    inputValue !== '' || typeFilter !== 'all' || sortOrder !== 'newest' || selectedTags.length > 0
 
   // Compute filtered/sorted list. The React Compiler handles memoization.
   let filteredAssets = [...assets]
@@ -122,6 +139,12 @@ export function GalleryClient({ assets }: GalleryClientProps) {
 
   if (typeFilter !== 'all') {
     filteredAssets = filteredAssets.filter((a) => a.type === typeFilter)
+  }
+
+  if (selectedTags.length > 0) {
+    filteredAssets = filteredAssets.filter((a) =>
+      selectedTags.some((tag) => a.tags.includes(tag))
+    )
   }
 
   if (sortOrder === 'popular') {
@@ -221,6 +244,44 @@ export function GalleryClient({ assets }: GalleryClientProps) {
           </button>
         )}
       </div>
+
+      {/* ── Tag filter row ── */}
+      {allTags.length > 0 && (
+        <div className="flex items-center gap-2">
+          <div
+            className="flex min-w-0 flex-1 gap-1.5 overflow-x-auto pb-1"
+            style={{ scrollbarWidth: 'none' }}
+          >
+            {allTags.map((tag) => {
+              const isActive = selectedTags.includes(tag)
+              return (
+                <button
+                  key={tag}
+                  onClick={() => toggleTag(tag)}
+                  style={
+                    isActive
+                      ? { backgroundColor: 'var(--accent)', color: '#fff', borderColor: 'var(--accent)' }
+                      : { backgroundColor: 'var(--bg-surface)', color: 'var(--text-secondary)', borderColor: 'var(--bg-border)' }
+                  }
+                  className="shrink-0 rounded-full border px-2.5 py-0.5 text-xs font-medium transition-colors hover:opacity-90"
+                >
+                  #{tag}
+                </button>
+              )
+            })}
+          </div>
+
+          {selectedTags.length > 0 && (
+            <button
+              onClick={clearTags}
+              style={{ color: 'var(--text-secondary)' }}
+              className="shrink-0 text-xs hover:opacity-70"
+            >
+              ✕ Clear tags
+            </button>
+          )}
+        </div>
+      )}
 
       {/* ── Results count ── */}
       <p style={{ color: 'var(--text-secondary)' }} className="text-xs">

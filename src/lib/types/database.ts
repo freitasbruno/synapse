@@ -235,7 +235,12 @@ export interface Database {
       }
     }
     Views: Record<string, never>
-    Functions: Record<string, never>
+    Functions: {
+      increment_view_count: {
+        Args: { asset_id: string }
+        Returns: undefined
+      }
+    }
     Enums: Record<string, never>
   }
 }

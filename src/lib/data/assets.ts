@@ -38,6 +38,24 @@ export async function getPublishedAssets(): Promise<AssetPreview[]> {
   return (data ?? []) as AssetPreview[]
 }
 
+export async function getAllTags(): Promise<string[]> {
+  const supabase = await createClient()
+
+  const result = await supabase
+    .from('assets')
+    .select('tags')
+    .eq('status', 'published')
+
+  if (result.error) {
+    console.error('[getAllTags] Supabase error:', result.error.message)
+    return []
+  }
+
+  const rows = (result.data ?? []) as Array<{ tags: string[] }>
+  const allTags = rows.flatMap((row) => row.tags ?? [])
+  return [...new Set(allTags)].sort()
+}
+
 export async function getAssetById(id: string): Promise<AssetRow | null> {
   const supabase = await createClient()
 

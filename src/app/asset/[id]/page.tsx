@@ -2,14 +2,11 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { Header } from '@/components/layout/Header'
 import { SequenceRenderer } from '@/components/asset/SequenceRenderer'
+import { ViewTracker } from '@/components/asset/ViewTracker'
+import { TagBadge } from '@/components/ui/TagBadge'
+import { formatCount } from '@/lib/utils/format'
 import { getAssetById } from '@/lib/data/assets'
 import type { AssetRow } from '@/lib/data/assets'
-
-// ─── helpers ─────────────────────────────────────────────────────────────────
-
-function formatCount(n: number): string {
-  return n >= 1000 ? `${(n / 1000).toFixed(1)}k` : String(n)
-}
 
 // ─── badge configs (mirrors AssetCard, defined locally per constraint) ────────
 
@@ -80,6 +77,7 @@ export default async function AssetPage({
   return (
     <>
       <Header />
+      <ViewTracker id={asset.id} />
       <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
 
         {/* ── Back navigation ── */}
@@ -129,21 +127,11 @@ export default async function AssetPage({
             </p>
           )}
 
-          {/* Tags */}
+          {/* Tags — all tags, each clickable */}
           {asset.tags.length > 0 && (
             <div className="mt-4 flex flex-wrap gap-1.5">
               {asset.tags.map((tag) => (
-                <span
-                  key={tag}
-                  style={{
-                    backgroundColor: 'var(--bg-surface)',
-                    borderColor: 'var(--bg-border)',
-                    color: 'var(--text-secondary)',
-                  }}
-                  className="rounded border px-2 py-0.5 text-xs"
-                >
-                  #{tag}
-                </span>
+                <TagBadge key={tag} label={tag} clickable />
               ))}
             </div>
           )}
@@ -153,10 +141,14 @@ export default async function AssetPage({
             style={{ color: 'var(--text-secondary)' }}
             className="mt-5 flex items-center gap-5 text-sm"
           >
-            <span className="flex items-center gap-1.5">
+            <button
+              title="Sign in to star this asset"
+              style={{ color: 'var(--text-secondary)' }}
+              className="flex items-center gap-1.5 hover:opacity-70"
+            >
               <StarIcon />
               {formatCount(asset.star_count)}
-            </span>
+            </button>
             <span className="flex items-center gap-1.5">
               <CommentIcon />
               {formatCount(asset.comment_count)}

@@ -1,13 +1,10 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { formatCount } from '@/lib/utils/format'
+import { TagBadge } from '@/components/ui/TagBadge'
 import type { AssetPreview } from '@/lib/data/assets'
-
-// ─── helpers ─────────────────────────────────────────────────────────────────
-
-function formatCount(n: number): string {
-  return n >= 1000 ? `${(n / 1000).toFixed(1)}k` : String(n)
-}
 
 // ─── type badge colours ───────────────────────────────────────────────────────
 
@@ -64,104 +61,107 @@ function ShieldCheckIcon() {
 // ─── component ────────────────────────────────────────────────────────────────
 
 export function AssetCard({ asset }: { asset: AssetPreview }) {
+  const router = useRouter()
   const visibleTags = asset.tags.slice(0, 3)
   const extraTagCount = asset.tags.length - 3
 
   return (
-    <Link href={`/asset/${asset.id}`} className="group block h-full">
-      <article
-        style={{
-          backgroundColor: 'var(--bg-surface)',
-          borderColor: 'var(--bg-border)',
-        }}
-        className="flex h-full flex-col rounded-xl border p-4 transition-all duration-200 group-hover:scale-[1.02] group-hover:shadow-lg group-hover:[border-color:var(--accent)]"
-      >
-        {/* ── header row ── */}
-        <div className="mb-3 flex items-start justify-between gap-2">
-          <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${TYPE_STYLES[asset.type]}`}>
-            {TYPE_LABELS[asset.type]}
-          </span>
+    <article
+      onClick={() => router.push(`/asset/${asset.id}`)}
+      onKeyDown={(e) => { if (e.key === 'Enter') router.push(`/asset/${asset.id}`) }}
+      role="link"
+      tabIndex={0}
+      aria-label={asset.title}
+      style={{
+        backgroundColor: 'var(--bg-surface)',
+        borderColor: 'var(--bg-border)',
+      }}
+      className="flex h-full cursor-pointer flex-col rounded-xl border p-4 transition-all duration-200 hover:scale-[1.02] hover:shadow-lg hover:[border-color:var(--accent)]"
+    >
+      {/* ── header row ── */}
+      <div className="mb-3 flex items-start justify-between gap-2">
+        <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${TYPE_STYLES[asset.type]}`}>
+          {TYPE_LABELS[asset.type]}
+        </span>
 
-          {asset.is_manager_validated && (
+        {asset.is_manager_validated && (
+          <span
+            title="Verified by Synapse managers"
+            className="shrink-0 text-amber-400"
+          >
+            <ShieldCheckIcon />
+          </span>
+        )}
+      </div>
+
+      {/* ── title — real link for accessibility/keyboard ── */}
+      <h3 className="mb-2 line-clamp-2 text-sm font-semibold leading-snug">
+        <Link
+          href={`/asset/${asset.id}`}
+          onClick={(e) => e.stopPropagation()}
+          style={{ color: 'var(--text-primary)' }}
+          className="hover:underline"
+        >
+          {asset.title}
+        </Link>
+      </h3>
+
+      {/* ── description ── */}
+      {asset.description && (
+        <p
+          style={{ color: 'var(--text-secondary)' }}
+          className="mb-3 line-clamp-3 text-xs leading-relaxed"
+        >
+          {asset.description}
+        </p>
+      )}
+
+      {/* ── tags ── */}
+      {asset.tags.length > 0 && (
+        <div className="mb-4 flex flex-wrap items-center gap-1">
+          {visibleTags.map((tag) => (
+            <TagBadge key={tag} label={tag} clickable />
+          ))}
+          {extraTagCount > 0 && (
             <span
-              title="Verified by Synapse managers"
-              className="shrink-0 text-amber-400"
+              style={{ color: 'var(--text-secondary)' }}
+              className="text-xs"
             >
-              <ShieldCheckIcon />
+              +{extraTagCount} more
             </span>
           )}
         </div>
+      )}
 
-        {/* ── title ── */}
-        <h3
-          style={{ color: 'var(--text-primary)' }}
-          className="mb-2 line-clamp-2 text-sm font-semibold leading-snug"
+      {/* ── spacer ── */}
+      <div className="flex-1" />
+
+      {/* ── footer ── */}
+      <div
+        style={{
+          borderTopColor: 'var(--bg-border)',
+          color: 'var(--text-secondary)',
+        }}
+        className="flex items-center gap-4 border-t pt-3 text-xs"
+      >
+        <button
+          title="Sign in to star this asset"
+          onClick={(e) => e.stopPropagation()}
+          style={{ color: 'var(--text-secondary)' }}
+          className="flex items-center gap-1 hover:opacity-70"
         >
-          {asset.title}
-        </h3>
-
-        {/* ── description ── */}
-        {asset.description && (
-          <p
-            style={{ color: 'var(--text-secondary)' }}
-            className="mb-3 line-clamp-3 text-xs leading-relaxed"
-          >
-            {asset.description}
-          </p>
-        )}
-
-        {/* ── tags ── */}
-        {asset.tags.length > 0 && (
-          <div className="mb-4 flex flex-wrap items-center gap-1">
-            {visibleTags.map((tag) => (
-              <span
-                key={tag}
-                style={{
-                  backgroundColor: 'var(--bg)',
-                  borderColor: 'var(--bg-border)',
-                  color: 'var(--text-secondary)',
-                }}
-                className="rounded border px-1.5 py-0.5 text-xs"
-              >
-                #{tag}
-              </span>
-            ))}
-            {extraTagCount > 0 && (
-              <span
-                style={{ color: 'var(--text-secondary)' }}
-                className="text-xs"
-              >
-                +{extraTagCount} more
-              </span>
-            )}
-          </div>
-        )}
-
-        {/* ── spacer ── */}
-        <div className="flex-1" />
-
-        {/* ── footer ── */}
-        <div
-          style={{
-            borderTopColor: 'var(--bg-border)',
-            color: 'var(--text-secondary)',
-          }}
-          className="flex items-center gap-4 border-t pt-3 text-xs"
-        >
-          <span className="flex items-center gap-1">
-            <StarIcon />
-            {formatCount(asset.star_count)}
-          </span>
-          <span className="flex items-center gap-1">
-            <CommentIcon />
-            {formatCount(asset.comment_count)}
-          </span>
-          <span className="flex items-center gap-1">
-            <ViewIcon />
-            {formatCount(asset.view_count)}
-          </span>
-        </div>
-      </article>
-    </Link>
+          <StarIcon />
+          {formatCount(asset.star_count)}
+        </button>
+        <span className="flex items-center gap-1">
+          <CommentIcon />
+          {formatCount(asset.comment_count)}
+        </span>
+        <span className="flex items-center gap-1">
+          <ViewIcon />
+          {formatCount(asset.view_count)}
+        </span>
+      </div>
+    </article>
   )
 }
