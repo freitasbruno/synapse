@@ -1,8 +1,17 @@
-import { type NextRequest } from 'next/server'
+import { NextResponse, type NextRequest } from 'next/server'
 import { updateSession } from '@/lib/supabase/middleware'
 
+const PROTECTED_ROUTES = ['/profile', '/onboarding']
+
 export async function middleware(request: NextRequest) {
-  return await updateSession(request)
+  const { response, user } = await updateSession(request)
+
+  const { pathname } = request.nextUrl
+  if (PROTECTED_ROUTES.some((r) => pathname.startsWith(r)) && !user) {
+    return NextResponse.redirect(new URL('/', request.url))
+  }
+
+  return response
 }
 
 export const config = {

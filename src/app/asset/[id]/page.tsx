@@ -7,6 +7,7 @@ import { TagBadge } from '@/components/ui/TagBadge'
 import { ActionButtons } from '@/components/ui/ActionButtons'
 import { formatCount } from '@/lib/utils/format'
 import { getAssetById } from '@/lib/data/assets'
+import { getSession } from '@/lib/auth/session'
 import type { AssetRow } from '@/lib/data/assets'
 
 // ─── badge configs (mirrors AssetCard, defined locally per constraint) ────────
@@ -62,9 +63,10 @@ export default async function AssetPage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
-  const asset = await getAssetById(id)
+  const [asset, session] = await Promise.all([getAssetById(id), getSession()])
 
   if (!asset) notFound()
+  const isAuthenticated = Boolean(session)
 
   return (
     <>
@@ -134,9 +136,9 @@ export default async function AssetPage({
             className="mt-5 flex items-center gap-5 text-sm"
           >
             <button
-              title="Sign in to star this asset"
+              title={isAuthenticated ? undefined : 'Sign in to star this asset'}
               style={{ color: 'var(--text-secondary)' }}
-              className="flex items-center gap-1.5 hover:opacity-70"
+              className={`flex items-center gap-1.5 hover:opacity-70 ${isAuthenticated ? 'cursor-pointer' : 'cursor-default'}`}
             >
               <StarIcon />
               {formatCount(asset.star_count)}

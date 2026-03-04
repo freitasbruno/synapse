@@ -78,3 +78,20 @@ export async function getAssetById(id: string): Promise<AssetRow | null> {
 
   return data as AssetRow
 }
+
+export async function getAssetsByCreator(creatorId: string): Promise<AssetRow[]> {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from('assets')
+    .select('*')
+    .eq('creator_id', creatorId)
+    .order('created_at', { ascending: false })
+
+  if (error) {
+    console.error('[getAssetsByCreator] Supabase error:', error.message)
+    return []
+  }
+
+  return (data ?? []) as AssetRow[]
+}

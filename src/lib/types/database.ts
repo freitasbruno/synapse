@@ -49,6 +49,7 @@ export interface Database {
           contributions_count?: number
           created_at?: string
         }
+        Relationships: []
       }
       assets: {
         Row: {
@@ -117,6 +118,7 @@ export interface Database {
           updated_at?: string
           last_published_at?: string | null
         }
+        Relationships: []
       }
       comments: {
         Row: {
@@ -143,6 +145,7 @@ export interface Database {
           text?: string
           created_at?: string
         }
+        Relationships: []
       }
       votes: {
         Row: {
@@ -163,6 +166,7 @@ export interface Database {
           user_id?: string
           created_at?: string
         }
+        Relationships: []
       }
       activity_logs: {
         Row: {
@@ -186,6 +190,7 @@ export interface Database {
           user_id?: string | null
           created_at?: string
         }
+        Relationships: []
       }
       ai_usage_logs: {
         Row: {
@@ -212,6 +217,7 @@ export interface Database {
           tokens_output?: number
           created_at?: string
         }
+        Relationships: []
       }
       system_stats: {
         Row: {
@@ -232,6 +238,7 @@ export interface Database {
           total_refine_calls?: number
           total_tokens?: number
         }
+        Relationships: []
       }
     }
     Views: Record<string, never>

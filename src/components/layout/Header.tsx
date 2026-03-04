@@ -1,6 +1,10 @@
 import { ThemeToggle } from './ThemeToggle'
+import { HeaderClient } from './HeaderClient'
+import { getCurrentUser } from '@/lib/auth/session'
 
-export function Header() {
+export async function Header() {
+  const user = await getCurrentUser()
+
   return (
     <header
       style={{
@@ -24,15 +28,7 @@ export function Header() {
         {/* Right actions */}
         <div className="flex items-center gap-3">
           <ThemeToggle />
-          <button
-            style={{
-              backgroundColor: 'var(--accent)',
-              color: '#ffffff',
-            }}
-            className="rounded-md px-4 py-1.5 text-sm font-medium transition-opacity hover:opacity-90"
-          >
-            Sign In
-          </button>
+          <HeaderClient user={user} />
         </div>
       </div>
     </header>

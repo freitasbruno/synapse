@@ -59,9 +59,10 @@ function XIcon() {
 interface GalleryClientProps {
   assets: AssetPreview[]
   allTags: string[]
+  isAuthenticated?: boolean
 }
 
-export function GalleryClient({ assets, allTags }: GalleryClientProps) {
+export function GalleryClient({ assets, allTags, isAuthenticated = false }: GalleryClientProps) {
   const router       = useRouter()
   const pathname     = usePathname()
   const searchParams = useSearchParams()
@@ -296,7 +297,7 @@ export function GalleryClient({ assets, allTags }: GalleryClientProps) {
       {filteredAssets.length > 0 ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {filteredAssets.map((asset) => (
-            <AssetCard key={asset.id} asset={asset} />
+            <AssetCard key={asset.id} asset={asset} isAuthenticated={isAuthenticated} />
           ))}
         </div>
       ) : (

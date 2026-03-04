@@ -8,9 +8,6 @@ export async function POST(
   const { id } = await params
   const supabase = await createClient()
 
-  // Supabase rpc() generic inference doesn't reliably propagate Database.Functions
-  // through @supabase/ssr. The function and args are correct at runtime.
-  // @ts-expect-error -- TS2345: args type defaults to `never` due to generics limitation
   const { error } = await supabase.rpc('increment_view_count', { asset_id: id })
 
   if (error) {

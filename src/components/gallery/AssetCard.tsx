@@ -61,7 +61,7 @@ function ShieldCheckIcon() {
 
 // ─── component ────────────────────────────────────────────────────────────────
 
-export function AssetCard({ asset }: { asset: AssetPreview }) {
+export function AssetCard({ asset, isAuthenticated = false }: { asset: AssetPreview; isAuthenticated?: boolean }) {
   const router = useRouter()
   const visibleTags = asset.tags.slice(0, 3)
   const extraTagCount = asset.tags.length - 3
@@ -146,10 +146,10 @@ export function AssetCard({ asset }: { asset: AssetPreview }) {
         className="flex items-center gap-4 border-t pt-3 text-xs"
       >
         <button
-          title="Sign in to star this asset"
+          title={isAuthenticated ? undefined : 'Sign in to star this asset'}
           onClick={(e) => e.stopPropagation()}
           style={{ color: 'var(--text-secondary)' }}
-          className="flex items-center gap-1 hover:opacity-70"
+          className={`flex items-center gap-1 hover:opacity-70 ${isAuthenticated ? 'cursor-pointer' : 'cursor-default'}`}
         >
           <StarIcon />
           {formatCount(asset.star_count)}

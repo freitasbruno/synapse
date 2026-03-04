@@ -2,6 +2,7 @@ import { Suspense } from 'react'
 import { Header } from '@/components/layout/Header'
 import { GalleryClient } from '@/components/gallery/GalleryClient'
 import { getPublishedAssets, getAllTags } from '@/lib/data/assets'
+import { getSession } from '@/lib/auth/session'
 
 // GalleryClient uses useSearchParams() — Suspense boundary required.
 function GalleryFallback() {
@@ -16,10 +17,12 @@ function GalleryFallback() {
 }
 
 export default async function Home() {
-  const [assets, allTags] = await Promise.all([
+  const [assets, allTags, session] = await Promise.all([
     getPublishedAssets(),
     getAllTags(),
+    getSession(),
   ])
+  const isAuthenticated = Boolean(session)
 
   return (
     <>
@@ -38,7 +41,7 @@ export default async function Home() {
         </div>
 
         <Suspense fallback={<GalleryFallback />}>
-          <GalleryClient assets={assets} allTags={allTags} />
+          <GalleryClient assets={assets} allTags={allTags} isAuthenticated={isAuthenticated} />
         </Suspense>
       </main>
     </>
