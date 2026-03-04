@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { formatCount } from '@/lib/utils/format'
 import { TagBadge } from '@/components/ui/TagBadge'
+import { ActionButtons } from '@/components/ui/ActionButtons'
 import type { AssetPreview } from '@/lib/data/assets'
 
 // ─── type badge colours ───────────────────────────────────────────────────────
@@ -162,6 +163,17 @@ export function AssetCard({ asset }: { asset: AssetPreview }) {
           {formatCount(asset.view_count)}
         </span>
       </div>
+
+      {/* ── compact action buttons ── */}
+      {(asset.content ?? asset.external_url) && (
+        <div className="mt-3">
+          <ActionButtons
+            content={asset.content}
+            externalUrl={asset.external_url}
+            compact
+          />
+        </div>
+      )}
     </article>
   )
 }

@@ -4,6 +4,7 @@ import { Header } from '@/components/layout/Header'
 import { SequenceRenderer } from '@/components/asset/SequenceRenderer'
 import { ViewTracker } from '@/components/asset/ViewTracker'
 import { TagBadge } from '@/components/ui/TagBadge'
+import { ActionButtons } from '@/components/ui/ActionButtons'
 import { formatCount } from '@/lib/utils/format'
 import { getAssetById } from '@/lib/data/assets'
 import type { AssetRow } from '@/lib/data/assets'
@@ -49,15 +50,6 @@ function ShieldCheckIcon() {
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
       <polyline points="9 12 11 14 15 10" />
-    </svg>
-  )
-}
-function ExternalLinkIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-      <polyline points="15 3 21 3 21 9" />
-      <line x1="10" y1="14" x2="21" y2="3" />
     </svg>
   )
 }
@@ -159,19 +151,10 @@ export default async function AssetPage({
             </span>
           </div>
 
-          {/* External link */}
-          {asset.external_url && (
-            <a
-              href={asset.external_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ backgroundColor: 'var(--accent)', color: '#ffffff' }}
-              className="mt-5 inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-opacity hover:opacity-90"
-            >
-              Visit Resource
-              <ExternalLinkIcon />
-            </a>
-          )}
+          {/* Action buttons */}
+          <div className="mt-5">
+            <ActionButtons content={asset.content} externalUrl={asset.external_url} />
+          </div>
 
           {/* Divider */}
           <hr

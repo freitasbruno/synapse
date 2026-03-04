@@ -9,6 +9,8 @@ export type AssetPreview = Pick<
   | 'title'
   | 'type'
   | 'description'
+  | 'content'
+  | 'external_url'
   | 'tags'
   | 'vote_count'
   | 'star_count'
@@ -19,7 +21,7 @@ export type AssetPreview = Pick<
 >
 
 const SELECT_COLUMNS =
-  'id, title, type, description, tags, vote_count, star_count, comment_count, view_count, is_manager_validated, created_at' as const
+  'id, title, type, description, content, external_url, tags, vote_count, star_count, comment_count, view_count, is_manager_validated, created_at' as const
 
 export async function getPublishedAssets(): Promise<AssetPreview[]> {
   const supabase = await createClient()
