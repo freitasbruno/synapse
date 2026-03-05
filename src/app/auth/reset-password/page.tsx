@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, Suspense } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
@@ -33,6 +34,15 @@ function Card({ children }: { children: React.ReactNode }) {
       className="w-full max-w-md rounded-2xl border p-8"
     >
       {children}
+    </div>
+  )
+}
+
+function SynapseLogo() {
+  return (
+    <div className="mb-6 flex justify-center">
+      <Image src="/SynapseIconDark/ios/iTunesArtwork@2x.png" alt="Synapse" width={48} height={48} className="block dark:hidden" priority />
+      <Image src="/SynapseIcon/ios/iTunesArtwork@2x.png" alt="Synapse" width={48} height={48} className="hidden dark:block" priority />
     </div>
   )
 }
@@ -88,6 +98,7 @@ function ResetPasswordContent() {
     if (exchangeError) {
       return (
         <Card>
+          <SynapseLogo />
           <h1 className="text-2xl font-bold tracking-tight">Invalid Link</h1>
           <p style={{ color: 'var(--text-secondary)' }} className="mt-2 text-sm leading-relaxed">
             {exchangeError}
@@ -134,6 +145,7 @@ function ResetPasswordContent() {
 
     return (
       <Card>
+        <SynapseLogo />
         <h1 className="text-2xl font-bold tracking-tight">Set New Password</h1>
         <p style={{ color: 'var(--text-secondary)' }} className="mt-1 text-sm">
           Choose a strong password for your account.
@@ -215,6 +227,7 @@ function ResetPasswordContent() {
   if (requestSent) {
     return (
       <Card>
+        <SynapseLogo />
         <h1 className="text-2xl font-bold tracking-tight">Check your email</h1>
         <p style={{ color: 'var(--text-secondary)' }} className="mt-2 text-sm leading-relaxed">
           We sent a password reset link to{' '}
@@ -252,6 +265,7 @@ function ResetPasswordContent() {
 
   return (
     <Card>
+      <SynapseLogo />
       <h1 className="text-2xl font-bold tracking-tight">Reset Password</h1>
       <p style={{ color: 'var(--text-secondary)' }} className="mt-1 text-sm">
         Enter your email and we&apos;ll send you a reset link.

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
@@ -119,6 +120,11 @@ export default function SignInPage() {
         style={{ backgroundColor: 'var(--bg-surface)', borderColor: 'var(--bg-border)' }}
         className="w-full max-w-md rounded-2xl border p-8"
       >
+        {/* Logo */}
+        <div className="mb-6 flex justify-center">
+          <Image src="/SynapseIconDark/ios/iTunesArtwork@2x.png" alt="Synapse" width={48} height={48} className="block dark:hidden" priority />
+          <Image src="/SynapseIcon/ios/iTunesArtwork@2x.png" alt="Synapse" width={48} height={48} className="hidden dark:block" priority />
+        </div>
         <h1 className="text-2xl font-bold tracking-tight">Sign In</h1>
         <p style={{ color: 'var(--text-secondary)' }} className="mt-1 text-sm">
           Sign in to your Synapse account

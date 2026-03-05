@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { redirect } from 'next/navigation'
 import { getCurrentUser } from '@/lib/auth/session'
 import { updateUser } from '@/lib/data/users'
@@ -42,6 +43,11 @@ export default async function OnboardingPage() {
         style={{ backgroundColor: 'var(--bg-surface)', borderColor: 'var(--bg-border)' }}
         className="w-full max-w-lg rounded-2xl border p-8"
       >
+        {/* Logo */}
+        <div className="mb-6 flex justify-center">
+          <Image src="/SynapseIconDark/ios/iTunesArtwork@2x.png" alt="Synapse" width={48} height={48} className="block dark:hidden" priority />
+          <Image src="/SynapseIcon/ios/iTunesArtwork@2x.png" alt="Synapse" width={48} height={48} className="hidden dark:block" priority />
+        </div>
         {/* Header */}
         <h1 className="text-2xl font-bold tracking-tight">
           Welcome to Synapse

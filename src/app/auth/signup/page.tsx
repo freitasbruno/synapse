@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 
@@ -114,6 +115,11 @@ export default function SignUpPage() {
           >
             <MailIcon />
           </div>
+          {/* Logo */}
+          <div className="mb-6 flex justify-center">
+            <Image src="/SynapseIconDark/ios/iTunesArtwork@2x.png" alt="Synapse" width={48} height={48} className="block dark:hidden" priority />
+            <Image src="/SynapseIcon/ios/iTunesArtwork@2x.png" alt="Synapse" width={48} height={48} className="hidden dark:block" priority />
+          </div>
           <h1 className="text-2xl font-bold tracking-tight">Check your email</h1>
           <p style={{ color: 'var(--text-secondary)' }} className="mt-3 text-sm leading-relaxed">
             We sent a confirmation link to{' '}
@@ -145,6 +151,11 @@ export default function SignUpPage() {
         style={{ backgroundColor: 'var(--bg-surface)', borderColor: 'var(--bg-border)' }}
         className="w-full max-w-md rounded-2xl border p-8"
       >
+        {/* Logo */}
+        <div className="mb-6 flex justify-center">
+          <Image src="/SynapseIconDark/ios/iTunesArtwork@2x.png" alt="Synapse" width={48} height={48} className="block dark:hidden" priority />
+          <Image src="/SynapseIcon/ios/iTunesArtwork@2x.png" alt="Synapse" width={48} height={48} className="hidden dark:block" priority />
+        </div>
         <h1 className="text-2xl font-bold tracking-tight">Create Account</h1>
         <p style={{ color: 'var(--text-secondary)' }} className="mt-1 text-sm">
           Join Synapse to contribute to the community.
