@@ -76,7 +76,7 @@ export default async function AssetPage({
 
         {/* ── Back navigation ── */}
         <Link
-          href="/"
+          href="/explore"
           style={{ color: 'var(--text-secondary)' }}
           className="inline-flex items-center gap-1.5 text-sm transition-colors hover:[color:var(--text-primary)]"
         >

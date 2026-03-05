@@ -1,49 +1,26 @@
-import { Suspense } from 'react'
+import { getPublishedAssetCount } from '@/lib/data/assets'
 import { Header } from '@/components/layout/Header'
-import { GalleryClient } from '@/components/gallery/GalleryClient'
-import { getPublishedAssets, getAllTags } from '@/lib/data/assets'
-import { getSession } from '@/lib/auth/session'
+import { Hero } from '@/components/landing/Hero'
+import { StatsBar } from '@/components/landing/StatsBar'
+import { FeatureCards } from '@/components/landing/FeatureCards'
+import { AssetTypes } from '@/components/landing/AssetTypes'
+import { MissionSection } from '@/components/landing/MissionSection'
+import { FinalCTA } from '@/components/landing/FinalCTA'
+import { LandingFooter } from '@/components/landing/LandingFooter'
 
-// GalleryClient uses useSearchParams() — Suspense boundary required.
-function GalleryFallback() {
+export default async function LandingPage() {
+  const assetCount = await getPublishedAssetCount()
+
   return (
-    <div
-      style={{ color: 'var(--text-secondary)' }}
-      className="flex min-h-[40vh] items-center justify-center text-sm"
-    >
-      Loading gallery…
+    <div style={{ backgroundColor: '#0a0a0a' }}>
+      <Header transparent />
+      <Hero />
+      <StatsBar assetCount={assetCount} />
+      <FeatureCards />
+      <AssetTypes />
+      <MissionSection />
+      <FinalCTA />
+      <LandingFooter />
     </div>
-  )
-}
-
-export default async function Home() {
-  const [assets, allTags, session] = await Promise.all([
-    getPublishedAssets(),
-    getAllTags(),
-    getSession(),
-  ])
-  const isAuthenticated = Boolean(session)
-
-  return (
-    <>
-      <Header />
-      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-        <div className="mb-8">
-          <h1
-            style={{ color: 'var(--text-primary)' }}
-            className="text-2xl font-bold tracking-tight"
-          >
-            Discovery Gallery
-          </h1>
-          <p style={{ color: 'var(--text-secondary)' }} className="mt-1 text-sm">
-            Explore community-built prompts, tools, apps, and workflows.
-          </p>
-        </div>
-
-        <Suspense fallback={<GalleryFallback />}>
-          <GalleryClient assets={assets} allTags={allTags} isAuthenticated={isAuthenticated} />
-        </Suspense>
-      </main>
-    </>
   )
 }

@@ -219,7 +219,7 @@ export default async function ProfilePage() {
                 You haven&apos;t created any assets yet.
               </p>
               <Link
-                href="/"
+                href="/explore"
                 style={{ color: 'var(--accent)' }}
                 className="mt-2 inline-block text-sm hover:underline"
               >

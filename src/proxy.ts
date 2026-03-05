@@ -9,6 +9,11 @@ export async function proxy(request: NextRequest) {
 
   const { pathname } = request.nextUrl
 
+  // Redirect authenticated users from landing page to gallery
+  if (pathname === '/' && user) {
+    return NextResponse.redirect(new URL('/explore', request.url))
+  }
+
   if (PROTECTED_ROUTES.some((r) => pathname.startsWith(r)) && !user) {
     return NextResponse.redirect(new URL('/', request.url))
   }
