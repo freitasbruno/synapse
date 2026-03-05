@@ -148,6 +148,16 @@ export function HeaderClient({ user }: HeaderClientProps) {
           >
             My Assets
           </Link>
+          {user.role === 'manager' && (
+            <Link
+              href="/admin/overview"
+              onClick={() => setDropdownOpen(false)}
+              style={{ color: '#FFD700' }}
+              className="block px-4 py-2 text-sm transition-colors hover:[background-color:var(--bg-border)]"
+            >
+              Admin Dashboard
+            </Link>
+          )}
 
           {/* Divider + Sign out */}
           <div style={{ borderTopColor: 'var(--bg-border)' }} className="mt-1 border-t pt-1">
