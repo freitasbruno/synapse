@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react'
 import Image from 'next/image'
 import { uploadFile } from '@/lib/storage/upload'
+import { RefinementModal } from './RefinementModal'
 
 // ─── block types (exported for AssetEditor) ───────────────────────────────────
 
@@ -29,12 +30,14 @@ function BlockControls({
   onMoveUp,
   onMoveDown,
   onRemove,
+  onRefine,
 }: {
   index: number
   total: number
   onMoveUp: () => void
   onMoveDown: () => void
   onRemove: () => void
+  onRefine?: () => void
 }) {
   const btnBase =
     'rounded px-1.5 py-0.5 text-xs transition-colors disabled:opacity-30 hover:[background-color:var(--bg-border)]'
@@ -61,6 +64,17 @@ function BlockControls({
       >
         ↓
       </button>
+      {onRefine && (
+        <button
+          type="button"
+          onClick={onRefine}
+          style={{ color: 'var(--accent)' }}
+          className={btnBase}
+          aria-label="Refine this block with AI"
+        >
+          ✨ Refine
+        </button>
+      )}
       <button
         type="button"
         onClick={onRemove}
@@ -354,11 +368,18 @@ function VideoBlockEditor({
 interface SequenceBuilderProps {
   blocks: EditorBlock[]
   assetId: string
+  assetTitle: string
+  assetType: string
   onChange: (blocks: EditorBlock[]) => void
 }
 
-export function SequenceBuilder({ blocks, assetId, onChange }: SequenceBuilderProps) {
+export function SequenceBuilder({ blocks, assetId, assetTitle, assetType, onChange }: SequenceBuilderProps) {
   const [progress, setProgress] = useState<Map<string, number>>(new Map())
+  const [refineBlockId, setRefineBlockId] = useState<string | null>(null)
+
+  const refineBlock = blocks.find((b) => b.id === refineBlockId && b.type === 'text') as
+    | (TextBlock & { id: string })
+    | undefined
 
   function updateBlock(id: string, updates: Partial<EditorBlock>) {
     onChange(
@@ -439,6 +460,7 @@ export function SequenceBuilder({ blocks, assetId, onChange }: SequenceBuilderPr
             onMoveUp={() => moveBlock(block.id, 'up')}
             onMoveDown={() => moveBlock(block.id, 'down')}
             onRemove={() => removeBlock(block.id)}
+            onRefine={block.type === 'text' ? () => setRefineBlockId(block.id) : undefined}
           />
 
           {block.type === 'text' && (
@@ -497,6 +519,19 @@ export function SequenceBuilder({ blocks, assetId, onChange }: SequenceBuilderPr
           + Video
         </button>
       </div>
+
+      {/* Refinement modal */}
+      <RefinementModal
+        isOpen={refineBlockId !== null}
+        onClose={() => setRefineBlockId(null)}
+        originalContent={refineBlock?.content ?? ''}
+        assetTitle={assetTitle}
+        assetType={assetType}
+        onAccept={(refined) => {
+          if (refineBlockId) updateBlock(refineBlockId, { content: refined })
+          setRefineBlockId(null)
+        }}
+      />
     </div>
   )
 }

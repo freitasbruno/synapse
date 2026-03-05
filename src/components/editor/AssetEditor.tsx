@@ -427,6 +427,8 @@ export function AssetEditor({ initialData, mode, creatorId }: AssetEditorProps) 
           <SequenceBuilder
             blocks={blocks}
             assetId={assetId}
+            assetTitle={title.trim() || 'Untitled Asset'}
+            assetType={type}
             onChange={(next) => setBlocks(next)}
           />
         </div>
