@@ -6,6 +6,8 @@ import { ViewTracker } from '@/components/asset/ViewTracker'
 import { TagBadge } from '@/components/ui/TagBadge'
 import { ActionButtons } from '@/components/ui/ActionButtons'
 import { StarButton } from '@/components/ui/StarButton'
+import { GoldBadge } from '@/components/ui/GoldBadge'
+import { ValidationToggle } from '@/components/ui/ValidationToggle'
 import { CommentSection } from '@/components/asset/CommentSection'
 import { formatCount } from '@/lib/utils/format'
 import { getAssetById, getStarStatus } from '@/lib/data/assets'
@@ -42,14 +44,6 @@ function ViewIcon() {
     </svg>
   )
 }
-function ShieldCheckIcon() {
-  return (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-      <polyline points="9 12 11 14 15 10" />
-    </svg>
-  )
-}
 
 // ─── page ─────────────────────────────────────────────────────────────────────
 
@@ -64,6 +58,7 @@ export default async function AssetPage({
   if (!asset) notFound()
 
   const isAuthenticated = Boolean(user)
+  const isManager = user?.role === 'manager'
 
   const [comments, initialStarred] = await Promise.all([
     getCommentsByAsset(asset.id),
@@ -93,16 +88,7 @@ export default async function AssetPage({
             <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${TYPE_STYLES[asset.type]}`}>
               {TYPE_LABELS[asset.type]}
             </span>
-            {asset.is_manager_validated && (
-              <span
-                title="Verified by Synapse managers"
-                className="flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium text-amber-400"
-                style={{ borderColor: 'rgb(251 191 36 / 0.3)', backgroundColor: 'rgb(251 191 36 / 0.1)' }}
-              >
-                <ShieldCheckIcon />
-                Verified
-              </span>
-            )}
+            {asset.is_manager_validated && <GoldBadge />}
           </div>
 
           {/* Title */}
@@ -153,6 +139,14 @@ export default async function AssetPage({
               {formatCount(asset.view_count)}
             </span>
           </div>
+
+          {/* Manager controls — server-side gated, never shown to non-managers */}
+          {isManager && (
+            <ValidationToggle
+              assetId={asset.id}
+              initialValidated={asset.is_manager_validated}
+            />
+          )}
 
           {/* Action buttons */}
           <div className="mt-5">
