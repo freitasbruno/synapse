@@ -40,9 +40,9 @@ function Card({ children }: { children: React.ReactNode }) {
 
 function SynapseLogo() {
   return (
-    <div className="mb-6 flex justify-center">
-      <Image src="/SynapseIconDark/ios/iTunesArtwork@2x.png" alt="Synapse" width={48} height={48} className="block dark:hidden" priority />
-      <Image src="/SynapseIcon/ios/iTunesArtwork@2x.png" alt="Synapse" width={48} height={48} className="hidden dark:block" priority />
+    <div className="mb-6 flex flex-col items-center gap-2">
+      <Image src="/icon.svg" alt="Synapse" width={75} height={106} priority />
+      <span style={{ color: 'var(--text-primary)' }} className="text-2xl font-bold tracking-tight">Synapse</span>
     </div>
   )
 }

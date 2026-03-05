@@ -18,22 +18,11 @@ export async function Header() {
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6">
         {/* Wordmark */}
         <Link href="/" className="flex items-center gap-2">
-          {/* Light theme logo */}
           <Image
-            src="/SynapseIcon/android/ic_launcher-web.png"
+            src="/icon.svg"
             alt="Synapse"
-            width={28}
+            width={20}
             height={28}
-            className="block dark:hidden rounded-md"
-            priority
-          />
-          {/* Dark theme logo */}
-          <Image
-            src="/SynapseIconDark/android/ic_launcher-web.png"
-            alt="Synapse"
-            width={28}
-            height={28}
-            className="hidden dark:block rounded-md"
             priority
           />
           <span

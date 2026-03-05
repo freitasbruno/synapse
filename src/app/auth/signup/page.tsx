@@ -116,9 +116,9 @@ export default function SignUpPage() {
             <MailIcon />
           </div>
           {/* Logo */}
-          <div className="mb-6 flex justify-center">
-            <Image src="/SynapseIconDark/ios/iTunesArtwork@2x.png" alt="Synapse" width={48} height={48} className="block dark:hidden" priority />
-            <Image src="/SynapseIcon/ios/iTunesArtwork@2x.png" alt="Synapse" width={48} height={48} className="hidden dark:block" priority />
+          <div className="mb-6 flex flex-col items-center gap-2">
+            <Image src="/icon.svg" alt="Synapse" width={75} height={106} priority />
+            <span style={{ color: 'var(--text-primary)' }} className="text-2xl font-bold tracking-tight">Synapse</span>
           </div>
           <h1 className="text-2xl font-bold tracking-tight">Check your email</h1>
           <p style={{ color: 'var(--text-secondary)' }} className="mt-3 text-sm leading-relaxed">
@@ -152,9 +152,9 @@ export default function SignUpPage() {
         className="w-full max-w-md rounded-2xl border p-8"
       >
         {/* Logo */}
-        <div className="mb-6 flex justify-center">
-          <Image src="/SynapseIconDark/ios/iTunesArtwork@2x.png" alt="Synapse" width={48} height={48} className="block dark:hidden" priority />
-          <Image src="/SynapseIcon/ios/iTunesArtwork@2x.png" alt="Synapse" width={48} height={48} className="hidden dark:block" priority />
+        <div className="mb-6 flex flex-col items-center gap-2">
+          <Image src="/icon.svg" alt="Synapse" width={75} height={106} priority />
+          <span style={{ color: 'var(--text-primary)' }} className="text-2xl font-bold tracking-tight">Synapse</span>
         </div>
         <h1 className="text-2xl font-bold tracking-tight">Create Account</h1>
         <p style={{ color: 'var(--text-secondary)' }} className="mt-1 text-sm">
