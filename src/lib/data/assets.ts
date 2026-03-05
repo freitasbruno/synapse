@@ -79,6 +79,55 @@ export async function getAssetById(id: string): Promise<AssetRow | null> {
   return data as AssetRow
 }
 
+export async function getAssetsByUser(userId: string): Promise<AssetRow[]> {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from('assets')
+    .select('*')
+    .eq('creator_id', userId)
+    .order('created_at', { ascending: false })
+
+  if (error) {
+    console.error('[getAssetsByUser] Supabase error:', error.message)
+    return []
+  }
+
+  return (data ?? []) as AssetRow[]
+}
+
+export async function getAssetForEdit(id: string): Promise<AssetRow | null> {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from('assets')
+    .select('*')
+    .eq('id', id)
+    .single()
+
+  if (error) {
+    if (error.code !== 'PGRST116') {
+      console.error('[getAssetForEdit] Supabase error:', error.message)
+    }
+    return null
+  }
+
+  return data as AssetRow
+}
+
+export async function deleteAsset(id: string): Promise<{ error: string | null }> {
+  const supabase = await createClient()
+
+  const { error } = await supabase.from('assets').delete().eq('id', id)
+
+  if (error) {
+    console.error('[deleteAsset] Supabase error:', error.message)
+    return { error: error.message }
+  }
+
+  return { error: null }
+}
+
 export async function getAssetsByCreator(creatorId: string): Promise<AssetRow[]> {
   const supabase = await createClient()
 
