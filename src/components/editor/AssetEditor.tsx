@@ -80,6 +80,11 @@ export function AssetEditor({ initialData, mode, creatorId }: AssetEditorProps) 
     jsonToBlocks(initialData?.description_sequence ?? []),
   )
 
+  // ── Visibility state ──────────────────────────────────────────────────────
+  const [visibility, setVisibility] = useState<'public' | 'private'>(
+    initialData?.visibility ?? 'public',
+  )
+
   // ── UI state ──────────────────────────────────────────────────────────────
   const [viewMode, setViewMode] = useState<'edit' | 'preview'>('edit')
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle')
@@ -105,7 +110,7 @@ export function AssetEditor({ initialData, mode, creatorId }: AssetEditorProps) 
     }
     setHasUnsavedChanges(true)
     setPublishErrors([])
-  }, [title, type, externalUrl, tags, content, blocks])
+  }, [title, type, externalUrl, tags, content, blocks, visibility])
 
   // ── beforeunload warning ──────────────────────────────────────────────────
   useEffect(() => {
@@ -124,7 +129,7 @@ export function AssetEditor({ initialData, mode, creatorId }: AssetEditorProps) 
     }, 30_000)
     return () => clearTimeout(timer)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [title, type, externalUrl, tags, content, blocks])
+  }, [title, type, externalUrl, tags, content, blocks, visibility])
 
   // ── Core save function ────────────────────────────────────────────────────
   async function saveAsset(status: 'draft' | 'published'): Promise<boolean> {
@@ -141,6 +146,7 @@ export function AssetEditor({ initialData, mode, creatorId }: AssetEditorProps) 
       content: type === 'prompt' ? (content.trim() || null) : null,
       description_sequence: blocksToJson(blocks),
       status,
+      visibility,
       updated_at: new Date().toISOString(),
       ...(status === 'published' ? { last_published_at: new Date().toISOString() } : {}),
     }
@@ -317,6 +323,21 @@ export function AssetEditor({ initialData, mode, creatorId }: AssetEditorProps) 
               : 'Save Draft'}
         </button>
 
+        {/* Visibility toggle */}
+        <button
+          type="button"
+          onClick={() => setVisibility((v) => (v === 'public' ? 'private' : 'public'))}
+          title={visibility === 'private' ? 'Only you can see this asset' : 'Visible to everyone'}
+          style={
+            visibility === 'private'
+              ? { borderColor: '#f59e0b', color: '#f59e0b' }
+              : { borderColor: 'var(--bg-border)', color: 'var(--text-secondary)' }
+          }
+          className="rounded-lg border px-3 py-2 text-sm font-medium transition-all hover:opacity-80"
+        >
+          {visibility === 'private' ? '🔒 Private' : '🌐 Public'}
+        </button>
+
         {/* Publish */}
         <button
           type="button"
@@ -328,6 +349,15 @@ export function AssetEditor({ initialData, mode, creatorId }: AssetEditorProps) 
           Publish
         </button>
       </div>
+
+      {/* Private asset notice */}
+      {visibility === 'private' && (
+        <div className="mb-4 rounded-lg border border-amber-500/20 bg-amber-500/10 px-4 py-3">
+          <p className="text-sm text-amber-400">
+            🔒 This asset is private and won&apos;t appear in the public gallery.
+          </p>
+        </div>
+      )}
 
       {/* Publish errors */}
       {publishErrors.length > 0 && (

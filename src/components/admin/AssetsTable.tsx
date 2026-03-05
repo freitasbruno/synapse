@@ -13,7 +13,7 @@ const TYPE_STYLES: Record<AdminAsset['type'], string> = {
   workflow: 'bg-violet-500/20 text-violet-400',
 }
 
-type Filter = 'all' | 'unvalidated' | 'draft'
+type Filter = 'all' | 'unvalidated' | 'draft' | 'private'
 
 // ─── component ────────────────────────────────────────────────────────────────
 
@@ -33,6 +33,7 @@ export function AssetsTable({ initialAssets }: { initialAssets: AdminAsset[] }) 
       if (filter === 'unvalidated' && (row.is_manager_validated || row.status !== 'published'))
         return false
       if (filter === 'draft' && row.status !== 'draft') return false
+      if (filter === 'private' && row.visibility !== 'private') return false
       if (search && !row.title.toLowerCase().includes(search.toLowerCase())) return false
       return true
     })
@@ -135,7 +136,7 @@ export function AssetsTable({ initialAssets }: { initialAssets: AdminAsset[] }) 
           style={{ backgroundColor: 'var(--bg-surface)', borderColor: 'var(--bg-border)' }}
           className="flex rounded-lg border p-1 text-sm"
         >
-          {(['all', 'unvalidated', 'draft'] as Filter[]).map((f) => (
+          {(['all', 'unvalidated', 'draft', 'private'] as Filter[]).map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f)}
@@ -189,7 +190,7 @@ export function AssetsTable({ initialAssets }: { initialAssets: AdminAsset[] }) 
                     aria-label="Select all"
                   />
                 </th>
-                {['Title', 'Type', 'Status', 'Validated', 'Creator', 'Created', 'Stars', 'Actions'].map(
+                {['Title', 'Type', 'Status', 'Visibility', 'Validated', 'Creator', 'Created', 'Stars', 'Actions'].map(
                   (h) => (
                     <th
                       key={h}
@@ -205,7 +206,7 @@ export function AssetsTable({ initialAssets }: { initialAssets: AdminAsset[] }) 
             <tbody>
               {displayed.length === 0 && (
                 <tr>
-                  <td colSpan={9} className="py-12 text-center">
+                  <td colSpan={10} className="py-12 text-center">
                     <p style={{ color: 'var(--text-secondary)' }} className="text-sm">
                       No assets match the current filter
                     </p>
@@ -264,6 +265,22 @@ export function AssetsTable({ initialAssets }: { initialAssets: AdminAsset[] }) 
                       >
                         {asset.status}
                       </span>
+                    </td>
+
+                    {/* Visibility */}
+                    <td className="px-3 py-3">
+                      {asset.visibility === 'private' ? (
+                        <span className="rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-xs font-medium text-amber-400">
+                          🔒 Private
+                        </span>
+                      ) : (
+                        <span
+                          className="rounded-full border px-2 py-0.5 text-xs font-medium"
+                          style={{ borderColor: 'var(--bg-border)', color: 'var(--text-secondary)' }}
+                        >
+                          🌐 Public
+                        </span>
+                      )}
                     </td>
 
                     {/* Validated */}

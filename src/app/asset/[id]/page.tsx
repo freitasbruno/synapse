@@ -57,6 +57,9 @@ export default async function AssetPage({
 
   if (!asset) notFound()
 
+  // Defence-in-depth: private assets are only visible to the creator
+  if (asset.visibility === 'private' && user?.id !== asset.creator_id) notFound()
+
   const isAuthenticated = Boolean(user)
   const isManager = user?.role === 'manager'
 

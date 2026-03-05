@@ -64,6 +64,7 @@ export interface Database {
           tags: string[]
           attachments: Json
           status: 'draft' | 'published'
+          visibility: 'public' | 'private'
           vote_count: number
           star_count: number
           comment_count: number
@@ -86,6 +87,7 @@ export interface Database {
           tags?: string[]
           attachments?: Json
           status?: 'draft' | 'published'
+          visibility?: 'public' | 'private'
           vote_count?: number
           star_count?: number
           comment_count?: number
@@ -108,6 +110,7 @@ export interface Database {
           tags?: string[]
           attachments?: Json
           status?: 'draft' | 'published'
+          visibility?: 'public' | 'private'
           vote_count?: number
           star_count?: number
           comment_count?: number

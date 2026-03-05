@@ -17,6 +17,7 @@ export type AdminAsset = {
   title: string
   type: 'prompt' | 'tool' | 'app' | 'workflow'
   status: 'draft' | 'published'
+  visibility: 'public' | 'private'
   is_manager_validated: boolean
   creator_id: string
   creator_name: string
@@ -237,7 +238,7 @@ export async function getAdminAssets(): Promise<AdminAsset[]> {
 
   const { data: assets, error } = await supabase
     .from('assets')
-    .select('id, title, type, status, is_manager_validated, creator_id, created_at, star_count')
+    .select('id, title, type, status, visibility, is_manager_validated, creator_id, created_at, star_count')
     .order('created_at', { ascending: false })
 
   if (error || !assets) {
@@ -250,6 +251,7 @@ export async function getAdminAssets(): Promise<AdminAsset[]> {
     title: string
     type: 'prompt' | 'tool' | 'app' | 'workflow'
     status: 'draft' | 'published'
+    visibility: 'public' | 'private'
     is_manager_validated: boolean
     creator_id: string
     created_at: string

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { formatCount } from '@/lib/utils/format'
@@ -36,6 +36,24 @@ function StatusBadge({ status }: { status: AssetRow['status'] }) {
       style={{ borderColor: 'var(--bg-border)', color: 'var(--text-secondary)' }}
     >
       Draft
+    </span>
+  )
+}
+
+function VisibilityBadge({ visibility }: { visibility: AssetRow['visibility'] }) {
+  if (visibility === 'private') {
+    return (
+      <span className="rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-xs font-medium text-amber-400">
+        🔒 Private
+      </span>
+    )
+  }
+  return (
+    <span
+      className="rounded-full border px-2 py-0.5 text-xs font-medium"
+      style={{ borderColor: 'var(--bg-border)', color: 'var(--text-secondary)' }}
+    >
+      🌐 Public
     </span>
   )
 }
@@ -91,16 +109,35 @@ function DeleteModal({
 
 // ─── DashboardClient ──────────────────────────────────────────────────────────
 
+type DashFilter = 'all' | 'public' | 'private' | 'drafts'
+
+const FILTER_LABELS: Record<DashFilter, string> = {
+  all: 'All',
+  public: 'Public',
+  private: 'Private',
+  drafts: 'Drafts',
+}
+
 interface DashboardClientProps {
   assets: AssetRow[]
 }
 
 export function DashboardClient({ assets: initialAssets }: DashboardClientProps) {
   const [assets, setAssets] = useState(initialAssets)
+  const [filter, setFilter] = useState<DashFilter>('all')
   const [confirmId, setConfirmId] = useState<string | null>(null)
   const [deleting, setDeleting] = useState(false)
 
   const confirmAsset = assets.find((a) => a.id === confirmId)
+
+  const displayed = useMemo(() => {
+    return assets.filter((a) => {
+      if (filter === 'public') return a.status === 'published' && a.visibility === 'public'
+      if (filter === 'private') return a.visibility === 'private'
+      if (filter === 'drafts') return a.status === 'draft'
+      return true
+    })
+  }, [assets, filter])
 
   async function handleDelete() {
     if (!confirmId) return
@@ -134,6 +171,28 @@ export function DashboardClient({ assets: initialAssets }: DashboardClientProps)
   // ── Asset list ────────────────────────────────────────────────────────────
   return (
     <>
+      {/* Filter tabs */}
+      <div
+        style={{ backgroundColor: 'var(--bg-surface)', borderColor: 'var(--bg-border)' }}
+        className="mb-4 flex rounded-lg border p-1 text-sm w-fit"
+      >
+        {(Object.keys(FILTER_LABELS) as DashFilter[]).map((f) => (
+          <button
+            key={f}
+            type="button"
+            onClick={() => setFilter(f)}
+            style={
+              filter === f
+                ? { backgroundColor: 'var(--accent)', color: '#fff' }
+                : { color: 'var(--text-secondary)' }
+            }
+            className="rounded-md px-3 py-1 capitalize transition-colors hover:[color:var(--text-primary)]"
+          >
+            {FILTER_LABELS[f]}
+          </button>
+        ))}
+      </div>
+
       <div className="overflow-hidden rounded-xl border" style={{ borderColor: 'var(--bg-border)' }}>
         <table className="w-full text-sm">
           <thead>
@@ -141,7 +200,7 @@ export function DashboardClient({ assets: initialAssets }: DashboardClientProps)
               style={{ borderBottomColor: 'var(--bg-border)', backgroundColor: 'var(--bg-surface)' }}
               className="border-b"
             >
-              {['Title', 'Type', 'Status', 'Stars', 'Created', 'Actions'].map((h) => (
+              {['Title', 'Type', 'Status', 'Visibility', 'Stars', 'Created', 'Actions'].map((h) => (
                 <th
                   key={h}
                   style={{ color: 'var(--text-secondary)' }}
@@ -153,7 +212,16 @@ export function DashboardClient({ assets: initialAssets }: DashboardClientProps)
             </tr>
           </thead>
           <tbody>
-            {assets.map((asset, idx) => (
+            {displayed.length === 0 && (
+              <tr>
+                <td colSpan={7} className="py-12 text-center">
+                  <p style={{ color: 'var(--text-secondary)' }} className="text-sm">
+                    No assets match this filter.
+                  </p>
+                </td>
+              </tr>
+            )}
+            {displayed.map((asset, idx) => (
               <tr
                 key={asset.id}
                 style={{
@@ -183,6 +251,11 @@ export function DashboardClient({ assets: initialAssets }: DashboardClientProps)
                 {/* Status */}
                 <td className="px-4 py-3">
                   <StatusBadge status={asset.status} />
+                </td>
+
+                {/* Visibility */}
+                <td className="px-4 py-3">
+                  <VisibilityBadge visibility={asset.visibility} />
                 </td>
 
                 {/* Stars */}

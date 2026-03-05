@@ -30,6 +30,7 @@ export async function getPublishedAssets(): Promise<AssetPreview[]> {
     .from('assets')
     .select(SELECT_COLUMNS)
     .eq('status', 'published')
+    .eq('visibility', 'public')
     .order('created_at', { ascending: false })
 
   if (error) {
@@ -47,6 +48,7 @@ export async function getAllTags(): Promise<string[]> {
     .from('assets')
     .select('tags')
     .eq('status', 'published')
+    .eq('visibility', 'public')
 
   if (result.error) {
     console.error('[getAllTags] Supabase error:', result.error.message)
