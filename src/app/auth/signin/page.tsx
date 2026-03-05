@@ -56,10 +56,42 @@ export default function SignInPage() {
     if (authError) {
       setError('Invalid email or password.')
       setLoading(false)
-    } else {
-      router.push('/')
-      router.refresh()
+      return
     }
+
+    // Ensure a users-table row exists (it may be missing if the confirmation email
+    // redirect was never set up correctly for this account).
+    const { data: { user: authUser } } = await supabase.auth.getUser()
+    if (authUser) {
+      const { data: profile } = await supabase
+        .from('users')
+        .select('id, profile_complete')
+        .eq('auth_id', authUser.id)
+        .single()
+
+      if (!profile) {
+        // First login via email/password with no profile row — create one and onboard.
+        await supabase.from('users').insert({
+          auth_id: authUser.id,
+          display_name:
+            (authUser.user_metadata?.full_name as string | undefined) ??
+            authUser.email ??
+            'User',
+          email: authUser.email ?? '',
+          photo_url: (authUser.user_metadata?.avatar_url as string | undefined) ?? null,
+        })
+        router.push('/onboarding')
+        return
+      }
+
+      if (!profile.profile_complete) {
+        router.push('/onboarding')
+        return
+      }
+    }
+
+    router.push('/')
+    router.refresh()
   }
 
   async function handleGoogleSignIn() {

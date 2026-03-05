@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { SequenceBuilder } from './SequenceBuilder'
 import { SequenceRenderer } from '@/components/asset/SequenceRenderer'
+import { AIStatusIndicator } from './AIStatusIndicator'
+import { assembleAssetContent } from '@/lib/utils/content'
 import type { AssetRow } from '@/lib/data/assets'
 import type { EditorBlock } from './SequenceBuilder'
 import type { Json } from '@/lib/types/database'
@@ -83,6 +85,10 @@ export function AssetEditor({ initialData, mode, creatorId }: AssetEditorProps) 
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle')
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
   const [publishErrors, setPublishErrors] = useState<string[]>([])
+
+  // ── Tag suggestion state ───────────────────────────────────────────────────
+  const [suggestedTags, setSuggestedTags] = useState<string[]>([])
+  const [tagSuggestLoading, setTagSuggestLoading] = useState(false)
 
   // Track whether a DB row exists yet (true for edit, false for new create)
   const isInsertedRef = useRef(mode === 'edit')
@@ -202,6 +208,51 @@ export function AssetEditor({ initialData, mode, creatorId }: AssetEditorProps) 
     setPublishErrors([])
     const ok = await saveAsset('published')
     if (ok) router.push(`/asset/${assetId}`)
+  }
+
+  // ── Tag suggestions ────────────────────────────────────────────────────────
+
+  // Clear suggestions when the user manually changes title or block structure
+  useEffect(() => {
+    if (!isMountedRef.current) return
+    setSuggestedTags([])
+  }, [title, blocks])
+
+  async function fetchTagSuggestions(blocksOverride?: EditorBlock[]) {
+    setTagSuggestLoading(true)
+    setSuggestedTags([])
+    try {
+      const assembled = assembleAssetContent(
+        blocksOverride ?? blocks,
+        type === 'prompt' ? content : undefined,
+      )
+      const res = await fetch('/api/suggest-tags', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: title.trim() || 'Untitled Asset',
+          assetType: type,
+          content: assembled,
+          existingTags: tags,
+        }),
+      })
+      if (!res.ok) return
+      const data = (await res.json()) as { tags?: string[] }
+      if (Array.isArray(data.tags)) {
+        // Filter out tags already applied at the time suggestions arrive
+        setSuggestedTags(data.tags.filter((t) => !tags.includes(t)))
+      }
+    } catch (err) {
+      console.error('[AssetEditor] tag suggestion error:', err)
+    } finally {
+      setTagSuggestLoading(false)
+    }
+  }
+
+  function addSuggestedTag(tag: string) {
+    if (!tags.includes(tag) && tags.length < 10) {
+      setTags([...tags, tag])
+    }
   }
 
   // ─── Styles ───────────────────────────────────────────────────────────────
@@ -386,6 +437,71 @@ export function AssetEditor({ initialData, mode, creatorId }: AssetEditorProps) 
           </div>
         </div>
 
+        {/* ── Tag suggestions ── */}
+        <div className="flex flex-col gap-2">
+          {/* Suggest button / loading indicator */}
+          <div className="flex items-center">
+            {tagSuggestLoading ? (
+              <AIStatusIndicator message="Suggesting tags…" />
+            ) : (
+              <button
+                type="button"
+                onClick={() => void fetchTagSuggestions()}
+                disabled={!title.trim() && blocks.length === 0}
+                style={{ color: 'var(--accent)' }}
+                className="text-xs font-medium transition-opacity hover:opacity-80 disabled:opacity-40"
+              >
+                ✨ Suggest Tags
+              </button>
+            )}
+          </div>
+
+          {/* Suggested chips */}
+          {suggestedTags.length > 0 && (
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>
+                Suggested:
+              </span>
+              {suggestedTags.map((tag) => {
+                const alreadyAdded = tags.includes(tag)
+                return (
+                  <button
+                    key={tag}
+                    type="button"
+                    onClick={() => addSuggestedTag(tag)}
+                    disabled={alreadyAdded || tags.length >= 10}
+                    style={
+                      alreadyAdded
+                        ? {
+                            color: 'var(--text-secondary)',
+                            borderColor: 'var(--bg-border)',
+                            backgroundColor: 'var(--bg-surface)',
+                          }
+                        : {
+                            color: 'var(--accent)',
+                            borderColor: 'var(--accent)',
+                            backgroundColor: 'transparent',
+                          }
+                    }
+                    className="flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-medium transition-opacity hover:opacity-80 disabled:cursor-default disabled:opacity-60"
+                  >
+                    {alreadyAdded ? '✓' : '+'} {tag}
+                  </button>
+                )
+              })}
+              <button
+                type="button"
+                onClick={() => setSuggestedTags([])}
+                style={{ color: 'var(--text-secondary)' }}
+                className="ml-auto text-xs transition-opacity hover:opacity-70"
+                aria-label="Dismiss tag suggestions"
+              >
+                ✕
+              </button>
+            </div>
+          )}
+        </div>
+
         {/* Prompt content (only for prompt type) */}
         {type === 'prompt' && (
           <div>
@@ -430,6 +546,7 @@ export function AssetEditor({ initialData, mode, creatorId }: AssetEditorProps) 
             assetTitle={title.trim() || 'Untitled Asset'}
             assetType={type}
             onChange={(next) => setBlocks(next)}
+            onBlockRefined={(updatedBlocks) => void fetchTagSuggestions(updatedBlocks)}
           />
         </div>
       ) : (

@@ -371,9 +371,10 @@ interface SequenceBuilderProps {
   assetTitle: string
   assetType: string
   onChange: (blocks: EditorBlock[]) => void
+  onBlockRefined?: (updatedBlocks: EditorBlock[]) => void
 }
 
-export function SequenceBuilder({ blocks, assetId, assetTitle, assetType, onChange }: SequenceBuilderProps) {
+export function SequenceBuilder({ blocks, assetId, assetTitle, assetType, onChange, onBlockRefined }: SequenceBuilderProps) {
   const [progress, setProgress] = useState<Map<string, number>>(new Map())
   const [refineBlockId, setRefineBlockId] = useState<string | null>(null)
 
@@ -528,8 +529,13 @@ export function SequenceBuilder({ blocks, assetId, assetTitle, assetType, onChan
         assetTitle={assetTitle}
         assetType={assetType}
         onAccept={(refined) => {
-          if (refineBlockId) updateBlock(refineBlockId, { content: refined })
+          if (!refineBlockId) return
+          const updatedBlocks = blocks.map((b) =>
+            b.id === refineBlockId ? ({ ...b, content: refined } as EditorBlock) : b,
+          )
+          onChange(updatedBlocks)
           setRefineBlockId(null)
+          onBlockRefined?.(updatedBlocks)
         }}
       />
     </div>
