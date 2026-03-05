@@ -128,6 +128,15 @@ export async function deleteAsset(id: string): Promise<{ error: string | null }>
   return { error: null }
 }
 
+export async function getStarStatus(assetId: string, userId: string): Promise<boolean> {
+  const supabase = await createClient()
+  const { data } = await supabase.rpc('get_star_status', {
+    p_asset_id: assetId,
+    p_user_id: userId,
+  })
+  return Boolean(data)
+}
+
 export async function getAssetsByCreator(creatorId: string): Promise<AssetRow[]> {
   const supabase = await createClient()
 

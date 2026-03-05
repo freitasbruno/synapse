@@ -247,6 +247,22 @@ export interface Database {
         Args: { asset_id: string }
         Returns: undefined
       }
+      toggle_star: {
+        Args: { p_asset_id: string; p_user_id: string }
+        Returns: { starred: boolean; star_count: number }
+      }
+      get_star_status: {
+        Args: { p_asset_id: string; p_user_id: string }
+        Returns: boolean
+      }
+      add_comment: {
+        Args: { p_asset_id: string; p_user_id: string; p_user_name: string; p_text: string }
+        Returns: string
+      }
+      delete_comment: {
+        Args: { p_comment_id: string; p_asset_id: string }
+        Returns: undefined
+      }
     }
     Enums: Record<string, never>
   }

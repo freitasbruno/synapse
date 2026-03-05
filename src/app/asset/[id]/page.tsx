@@ -5,12 +5,15 @@ import { SequenceRenderer } from '@/components/asset/SequenceRenderer'
 import { ViewTracker } from '@/components/asset/ViewTracker'
 import { TagBadge } from '@/components/ui/TagBadge'
 import { ActionButtons } from '@/components/ui/ActionButtons'
+import { StarButton } from '@/components/ui/StarButton'
+import { CommentSection } from '@/components/asset/CommentSection'
 import { formatCount } from '@/lib/utils/format'
-import { getAssetById } from '@/lib/data/assets'
-import { getSession } from '@/lib/auth/session'
+import { getAssetById, getStarStatus } from '@/lib/data/assets'
+import { getCommentsByAsset } from '@/lib/data/comments'
+import { getCurrentUser } from '@/lib/auth/session'
 import type { AssetRow } from '@/lib/data/assets'
 
-// ─── badge configs (mirrors AssetCard, defined locally per constraint) ────────
+// ─── badge configs ────────────────────────────────────────────────────────────
 
 const TYPE_STYLES: Record<AssetRow['type'], string> = {
   prompt:   'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30',
@@ -22,15 +25,8 @@ const TYPE_LABELS: Record<AssetRow['type'], string> = {
   prompt: 'Prompt', tool: 'Tool', app: 'App', workflow: 'Workflow',
 }
 
-// ─── icons (inline SVG) ───────────────────────────────────────────────────────
+// ─── icons ────────────────────────────────────────────────────────────────────
 
-function StarIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-    </svg>
-  )
-}
 function CommentIcon() {
   return (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -63,10 +59,16 @@ export default async function AssetPage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
-  const [asset, session] = await Promise.all([getAssetById(id), getSession()])
+  const [asset, user] = await Promise.all([getAssetById(id), getCurrentUser()])
 
   if (!asset) notFound()
-  const isAuthenticated = Boolean(session)
+
+  const isAuthenticated = Boolean(user)
+
+  const [comments, initialStarred] = await Promise.all([
+    getCommentsByAsset(asset.id),
+    user ? getStarStatus(asset.id, user.id) : Promise.resolve(false),
+  ])
 
   return (
     <>
@@ -121,7 +123,7 @@ export default async function AssetPage({
             </p>
           )}
 
-          {/* Tags — all tags, each clickable */}
+          {/* Tags */}
           {asset.tags.length > 0 && (
             <div className="mt-4 flex flex-wrap gap-1.5">
               {asset.tags.map((tag) => (
@@ -135,14 +137,13 @@ export default async function AssetPage({
             style={{ color: 'var(--text-secondary)' }}
             className="mt-5 flex items-center gap-5 text-sm"
           >
-            <button
-              title={isAuthenticated ? undefined : 'Sign in to star this asset'}
-              style={{ color: 'var(--text-secondary)' }}
-              className={`flex items-center gap-1.5 hover:opacity-70 ${isAuthenticated ? 'cursor-pointer' : 'cursor-default'}`}
-            >
-              <StarIcon />
-              {formatCount(asset.star_count)}
-            </button>
+            <StarButton
+              assetId={asset.id}
+              initialStarCount={asset.star_count}
+              initialStarred={initialStarred}
+              isAuthenticated={isAuthenticated}
+              size={14}
+            />
             <span className="flex items-center gap-1.5">
               <CommentIcon />
               {formatCount(asset.comment_count)}
@@ -159,10 +160,7 @@ export default async function AssetPage({
           </div>
 
           {/* Divider */}
-          <hr
-            style={{ borderColor: 'var(--bg-border)' }}
-            className="mt-8"
-          />
+          <hr style={{ borderColor: 'var(--bg-border)' }} className="mt-8" />
         </div>
 
         {/* ── Content sequence ── */}
@@ -170,18 +168,18 @@ export default async function AssetPage({
           <SequenceRenderer blocks={asset.description_sequence} />
         </div>
 
-        {/* ── Comments placeholder ── */}
+        {/* ── Comments ── */}
         <div className="mt-16">
           <hr style={{ borderColor: 'var(--bg-border)' }} className="mb-8" />
-          <h2
-            style={{ color: 'var(--text-primary)' }}
-            className="text-xl font-semibold"
-          >
-            Discussion
-          </h2>
-          <p style={{ color: 'var(--text-secondary)' }} className="mt-2 text-sm">
-            Comments coming soon.
-          </p>
+          <CommentSection
+            assetId={asset.id}
+            initialComments={comments}
+            currentUser={
+              user
+                ? { id: user.id, display_name: user.display_name, role: user.role }
+                : null
+            }
+          />
         </div>
 
       </main>

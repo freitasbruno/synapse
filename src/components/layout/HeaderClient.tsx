@@ -42,6 +42,7 @@ interface HeaderClientProps {
 export function HeaderClient({ user }: HeaderClientProps) {
   const router = useRouter()
   const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [photoError, setPhotoError] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
   // Close dropdown when clicking outside
@@ -86,14 +87,16 @@ export function HeaderClient({ user }: HeaderClientProps) {
         aria-label="Account menu"
         aria-expanded={dropdownOpen}
       >
-        {user.photo_url ? (
+        {user.photo_url && !photoError ? (
           <Image
             src={user.photo_url}
             alt={user.display_name}
             width={32}
             height={32}
             unoptimized
+            referrerPolicy="no-referrer"
             className="rounded-full"
+            onError={() => setPhotoError(true)}
           />
         ) : (
           <InitialsAvatar name={user.display_name} />

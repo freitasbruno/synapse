@@ -72,6 +72,7 @@ export default async function ProfilePage() {
               width={64}
               height={64}
               unoptimized
+              referrerPolicy="no-referrer"
               className="shrink-0 rounded-full"
             />
           ) : (

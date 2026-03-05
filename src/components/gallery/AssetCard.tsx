@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { formatCount } from '@/lib/utils/format'
 import { TagBadge } from '@/components/ui/TagBadge'
 import { ActionButtons } from '@/components/ui/ActionButtons'
+import { StarButton } from '@/components/ui/StarButton'
 import type { AssetPreview } from '@/lib/data/assets'
 
 // ─── type badge colours ───────────────────────────────────────────────────────
@@ -24,14 +25,6 @@ const TYPE_LABELS: Record<AssetPreview['type'], string> = {
 }
 
 // ─── icons ────────────────────────────────────────────────────────────────────
-
-function StarIcon() {
-  return (
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-    </svg>
-  )
-}
 
 function CommentIcon() {
   return (
@@ -145,15 +138,13 @@ export function AssetCard({ asset, isAuthenticated = false }: { asset: AssetPrev
         }}
         className="flex items-center gap-4 border-t pt-3 text-xs"
       >
-        <button
-          title={isAuthenticated ? undefined : 'Sign in to star this asset'}
-          onClick={(e) => e.stopPropagation()}
-          style={{ color: 'var(--text-secondary)' }}
-          className={`flex items-center gap-1 hover:opacity-70 ${isAuthenticated ? 'cursor-pointer' : 'cursor-default'}`}
-        >
-          <StarIcon />
-          {formatCount(asset.star_count)}
-        </button>
+        <StarButton
+          assetId={asset.id}
+          initialStarCount={asset.star_count}
+          initialStarred={false}
+          isAuthenticated={isAuthenticated}
+          size={13}
+        />
         <span className="flex items-center gap-1">
           <CommentIcon />
           {formatCount(asset.comment_count)}
