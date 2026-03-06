@@ -6,6 +6,7 @@ import { Header } from '@/components/layout/Header'
 interface RoadmapItem {
   title: string
   description: string
+  live?: boolean
 }
 
 interface RoadmapSection {
@@ -25,11 +26,6 @@ const SECTIONS: RoadmapSection[] = [
     colorMuted: 'rgba(99,102,241,0.12)',
     items: [
       {
-        title: 'Prompt Editor Upgrade',
-        description:
-          'Markdown support, AI refinement, and a guided Prompt Assistant to help you write better prompts.',
-      },
-      {
         title: 'Copy Block Content',
         description:
           'Copy any individual text block from an asset detail page with one click.',
@@ -42,13 +38,27 @@ const SECTIONS: RoadmapSection[] = [
     colorMuted: 'rgba(245,158,11,0.12)',
     items: [
       {
+        title: 'Prompt Editor Upgrade',
+        description:
+          'Markdown support, AI refinement, and a guided Prompt Assistant to help you write better prompts.',
+      },
+    ],
+  },
+  {
+    label: '✅ Shipped',
+    color: '#22c55e',
+    colorMuted: 'rgba(34,197,94,0.12)',
+    items: [
+      {
         title: 'Tag Filter Redesign',
         description:
           'Searchable dropdown with multi-select for easier tag discovery in the gallery.',
+        live: true,
       },
       {
         title: 'Edit Shortcut on Asset Pages',
         description: "Quick access to edit mode directly from an asset's detail page.",
+        live: true,
       },
     ],
   },
@@ -87,10 +97,10 @@ const SECTIONS: RoadmapSection[] = [
 
 // ─── components ───────────────────────────────────────────────────────────────
 
-function FeatureCard({ title, description, borderColor }: RoadmapItem & { borderColor: string }) {
+function FeatureCard({ title, description, live, borderColor }: RoadmapItem & { borderColor: string }) {
   return (
     <div
-      className="rounded-lg border p-4"
+      className="relative rounded-lg border p-4"
       style={{
         backgroundColor: 'var(--bg-surface)',
         borderColor: 'var(--bg-border)',
@@ -98,6 +108,14 @@ function FeatureCard({ title, description, borderColor }: RoadmapItem & { border
         borderLeftWidth: '3px',
       }}
     >
+      {live && (
+        <span
+          className="absolute right-3 top-3 rounded-full px-1.5 py-0.5 text-[10px] font-semibold"
+          style={{ backgroundColor: 'rgba(34,197,94,0.15)', color: '#22c55e' }}
+        >
+          ✅ Live
+        </span>
+      )}
       <p style={{ color: 'var(--text-primary)' }} className="text-sm font-semibold">
         {title}
       </p>
@@ -168,7 +186,7 @@ export default function RoadmapPage() {
         </div>
 
         {/* Three-column grid */}
-        <div className="grid gap-8 sm:grid-cols-3">
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {SECTIONS.map((section) => (
             <Section key={section.label} section={section} />
           ))}
