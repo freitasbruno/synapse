@@ -204,7 +204,6 @@ export function RefinementModal({
                 style={{ borderColor: 'var(--bg-border)' }}
               >
                 <AIStatusIndicator message="Analysing…" />
-                <AIStatusIndicator message="Claude is reviewing your content…" />
               </div>
             ) : (
               <div

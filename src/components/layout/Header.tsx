@@ -36,6 +36,15 @@ export async function Header({ transparent = false }: HeaderProps) {
         {/* Center — search placeholder */}
         <div className="flex-1" />
 
+        {/* Nav links */}
+        <Link
+          href="/roadmap"
+          style={{ color: 'var(--text-secondary)' }}
+          className="mr-3 hidden text-sm transition-colors hover:[color:var(--text-primary)] sm:block"
+        >
+          Roadmap
+        </Link>
+
         {/* Right actions */}
         <div className="flex items-center gap-3">
           <ThemeToggle />

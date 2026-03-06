@@ -26,6 +26,13 @@ export function LandingFooter() {
             Explore
           </Link>
           <Link
+            href="/roadmap"
+            className="text-sm transition-opacity hover:opacity-70"
+            style={{ color: 'rgba(255,255,255,0.45)' }}
+          >
+            Roadmap
+          </Link>
+          <Link
             href="/auth/signin"
             className="text-sm transition-opacity hover:opacity-70"
             style={{ color: 'rgba(255,255,255,0.45)' }}
