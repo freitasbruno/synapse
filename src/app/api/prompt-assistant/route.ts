@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server'
-import { streamText } from 'ai'
+import { streamText, convertToModelMessages, type UIMessage } from 'ai'
 import { createGoogleGenerativeAI } from '@ai-sdk/google'
 import { getCurrentUser } from '@/lib/auth/session'
 import { createClient } from '@/lib/supabase/server'
@@ -11,21 +11,23 @@ const GEMINI_MODEL = process.env.BITLAB_GEMINI_MODEL ?? 'gemini-2.0-flash'
 
 const SYSTEM_PROMPT = `You are a Prompt Engineering Assistant for Synapse, an AI asset community platform. Your job is to help users write clear, effective, well-structured prompts for AI models.
 
-Guide the user through a short series of questions to understand their use case. Ask one question at a time — don't overwhelm them. Once you have enough context (at minimum: the task, the tone, and the output format), draft a complete, professional prompt.
+Guide the user through a short series of questions to understand their use case. Ask ONE question at a time — never ask multiple questions in the same message. Once you have enough context (minimum: the task, the tone, and the output format), draft a complete professional prompt without waiting to be asked.
 
-When drafting, structure the prompt clearly with:
-- A role/persona for the AI (if appropriate)
+When drafting, structure the prompt with:
+- A role or persona for the AI (if appropriate)
 - Clear task instructions
-- Context or constraints
+- Relevant context or constraints
 - Output format specification
-- Any important dos and don'ts
+- Important dos and don'ts
 
-After drafting, offer to refine based on feedback. Keep your conversational messages concise and friendly. When you present a drafted prompt, wrap it in a markdown code block so it's clearly distinguished from your conversational text.`
+Always wrap your drafted prompt in a markdown fenced code block so it is clearly separated from your conversational text.
+After drafting, offer to refine based on feedback. Keep all conversational messages concise and friendly.
+Never explain what a prompt is — the user already knows.`
 
 // ─── types ────────────────────────────────────────────────────────────────────
 
 interface AssistantRequest {
-  messages: { role: 'user' | 'assistant'; content: string }[]
+  messages: UIMessage[]
   assetTitle?: string
 }
 
@@ -54,14 +56,18 @@ export async function POST(request: NextRequest) {
     ? `${SYSTEM_PROMPT}\n\nThe user is creating a prompt asset titled: "${assetTitle}".`
     : SYSTEM_PROMPT
 
+  // Convert UIMessage[] → ModelMessage[] for streamText
+  const modelMessages = await convertToModelMessages(
+    messages as Array<Omit<UIMessage, 'id'>>,
+  )
+
   // Prepare supabase client upfront so it's available in onFinish closure
   const supabase = await createClient()
 
   const result = streamText({
     model: google(GEMINI_MODEL),
     system: systemWithContext,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    messages: messages as any,
+    messages: modelMessages,
     onFinish({ usage }) {
       supabase
         .from('ai_usage_logs')
@@ -77,5 +83,5 @@ export async function POST(request: NextRequest) {
     },
   })
 
-  return result.toTextStreamResponse()
+  return result.toUIMessageStreamResponse()
 }
