@@ -8,7 +8,7 @@ import type { AdminAsset } from '@/lib/data/admin'
 
 const TYPE_STYLES: Record<AdminAsset['type'], string> = {
   prompt: 'bg-indigo-500/20 text-indigo-400',
-  tool: 'bg-emerald-500/20 text-emerald-400',
+  agent: 'bg-emerald-500/20 text-emerald-400',
   app: 'bg-amber-500/20 text-amber-400',
   workflow: 'bg-violet-500/20 text-violet-400',
 }

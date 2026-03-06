@@ -4,7 +4,7 @@ import { DailyBarChart } from '@/components/admin/DailyBarChart'
 
 const TYPE_COLORS: Record<string, string> = {
   prompt: '#818cf8',
-  tool: '#34d399',
+  agent: '#34d399',
   app: '#fbbf24',
   workflow: '#a78bfa',
 }

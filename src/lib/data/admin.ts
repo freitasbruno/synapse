@@ -15,7 +15,7 @@ function last30Days(): string[] {
 export type AdminAsset = {
   id: string
   title: string
-  type: 'prompt' | 'tool' | 'app' | 'workflow'
+  type: 'prompt' | 'agent' | 'app' | 'workflow'
   status: 'draft' | 'published'
   visibility: 'public' | 'private'
   is_manager_validated: boolean
@@ -249,7 +249,7 @@ export async function getAdminAssets(): Promise<AdminAsset[]> {
   const rows = assets as Array<{
     id: string
     title: string
-    type: 'prompt' | 'tool' | 'app' | 'workflow'
+    type: 'prompt' | 'agent' | 'app' | 'workflow'
     status: 'draft' | 'published'
     visibility: 'public' | 'private'
     is_manager_validated: boolean

@@ -36,7 +36,7 @@ export default async function ExplorePage() {
             Discovery Gallery
           </h1>
           <p style={{ color: 'var(--text-secondary)' }} className="mt-1 text-sm">
-            Explore community-built prompts, tools, apps, and workflows.
+            Explore community-built prompts, agents, apps, and workflows.
           </p>
         </div>
 

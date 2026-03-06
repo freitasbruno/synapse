@@ -11,7 +11,7 @@ const FEATURES = [
   {
     icon: '✍️',
     title: 'Contribute Assets',
-    body: 'Share your prompts, tools, apps, and workflows with the community. Rich documentation editor with markdown, images, and video.',
+    body: 'Share your prompts, agents, apps, and workflows with the community. Rich documentation editor with markdown, images, and video.',
   },
   {
     icon: '✨',

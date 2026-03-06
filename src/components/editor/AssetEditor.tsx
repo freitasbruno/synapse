@@ -390,7 +390,7 @@ export function AssetEditor({ initialData, mode, creatorId }: AssetEditorProps) 
             style={fieldStyle}
           >
             <option value="prompt">Prompt</option>
-            <option value="tool">Tool</option>
+            <option value="agent">Agent</option>
             <option value="app">App</option>
             <option value="workflow">Workflow</option>
           </select>

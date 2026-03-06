@@ -10,14 +10,14 @@ import type { AssetRow } from '@/lib/data/assets'
 
 const TYPE_LABELS: Record<AssetRow['type'], string> = {
   prompt: 'Prompt',
-  tool: 'Tool',
+  agent: 'Agent',
   app: 'App',
   workflow: 'Workflow',
 }
 
 const TYPE_STYLES: Record<AssetRow['type'], string> = {
   prompt: 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30',
-  tool: 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30',
+  agent: 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30',
   app: 'bg-amber-500/20 text-amber-400 border border-amber-500/30',
   workflow: 'bg-violet-500/20 text-violet-400 border border-violet-500/30',
 }

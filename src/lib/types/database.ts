@@ -56,7 +56,7 @@ export interface Database {
           id: string
           creator_id: string
           title: string
-          type: 'prompt' | 'tool' | 'app' | 'workflow'
+          type: 'prompt' | 'agent' | 'app' | 'workflow'
           description: string | null
           content: string | null
           description_sequence: Json
@@ -79,7 +79,7 @@ export interface Database {
           id?: string
           creator_id: string
           title: string
-          type: 'prompt' | 'tool' | 'app' | 'workflow'
+          type: 'prompt' | 'agent' | 'app' | 'workflow'
           description?: string | null
           content?: string | null
           description_sequence?: Json
@@ -102,7 +102,7 @@ export interface Database {
           id?: string
           creator_id?: string
           title?: string
-          type?: 'prompt' | 'tool' | 'app' | 'workflow'
+          type?: 'prompt' | 'agent' | 'app' | 'workflow'
           description?: string | null
           content?: string | null
           description_sequence?: Json

@@ -51,7 +51,7 @@ export function Hero() {
           className="text-xs font-semibold uppercase tracking-[0.25em]"
           style={{ color: '#6366f1' }}
         >
-          Open AI Knowledge Platform
+          AI Knowledge Platform
         </p>
 
         {/* Main headline */}
@@ -60,7 +60,7 @@ export function Hero() {
           className="text-4xl font-bold leading-tight tracking-tight sm:text-5xl lg:text-6xl"
           style={{ fontFamily: 'var(--font-display)', color: '#ffffff' }}
         >
-          The open library for AI that actually works.
+          Build Better AI, Together.
         </h1>
 
         {/* Subheadline */}
@@ -69,8 +69,7 @@ export function Hero() {
           className="text-lg leading-relaxed"
           style={{ color: 'rgba(255,255,255,0.6)', maxWidth: '540px' }}
         >
-          Synapse is where AI creators share battle-tested prompts, tools, workflows, and apps
-          — freely. Browse without friction. Contribute with confidence.
+          Synapse is the open repository for high-performance prompts and workflows. Frictionless browsing. Confident contributing. Provider agnostic.
         </p>
 
         {/* CTAs */}

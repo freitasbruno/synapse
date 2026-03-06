@@ -11,13 +11,13 @@ const TYPES = [
     slug: 'prompt',
   },
   {
-    icon: '🔧',
-    name: 'Tools',
+    icon: '🤖',
+    name: 'Agents',
     color: '#10b981',
     colorBg: 'rgba(16,185,129,0.12)',
     colorBorder: 'rgba(16,185,129,0.35)',
-    description: 'Scripts, utilities, and integrations that extend what AI can do.',
-    slug: 'tool',
+    description: 'Autonomous AI agents that plan, reason, and execute multi-step tasks. Share architectures, system prompts, and configurations.',
+    slug: 'agent',
   },
   {
     icon: '📱',

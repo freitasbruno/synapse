@@ -21,7 +21,7 @@ const spaceGrotesk = Space_Grotesk({
 
 export const metadata: Metadata = {
   title: 'Synapse',
-  description: 'Discover and share AI assets — Prompts, Tools, Apps, Workflows',
+  description: 'Discover and share AI assets — Prompts, Agents, Apps, Workflows',
   icons: {
     icon: '/favicon.ico',
     apple: '/apple-icon.png',

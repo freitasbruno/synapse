@@ -62,15 +62,15 @@ INSERT INTO assets (
 ),
 
 -- =============================================================
--- TOOLS (3)
+-- AGENTS (3)
 -- =============================================================
 
 (
   'a0000000-0000-0000-0000-000000000004',
   '00000000-0000-0000-0000-000000000001',
-  'GitHub PR Auto-Summarizer',
-  'tool',
-  'Paste a GitHub pull request diff and receive a concise, reviewer-ready summary: what changed, why it matters, risks introduced, and suggested review focus areas. Saves reviewers 10–15 minutes per PR.',
+  'GitHub PR Review Agent',
+  'agent',
+  'An autonomous agent that reads a pull request diff, reasons about the changes, identifies risks, generates a structured review with actionable checklist items, and posts a summary comment — all without human prompting. Saves reviewers 10–15 minutes per PR.',
   ARRAY['github', 'devops', 'productivity', 'code-review'],
   'published',
   267, 312, 78, 5400,
@@ -81,9 +81,9 @@ INSERT INTO assets (
 (
   'a0000000-0000-0000-0000-000000000005',
   '00000000-0000-0000-0000-000000000001',
-  'SQL Query Optimizer',
-  'tool',
-  'Analyzes slow SQL queries and suggests index strategies, rewrite patterns, and execution plan improvements. Supports PostgreSQL, MySQL, and SQLite dialects. Outputs both the optimized query and a plain-English explanation.',
+  'Database Optimization Agent',
+  'agent',
+  'An agent that autonomously analyzes slow SQL queries, inspects execution plans, reasons about index strategies, proposes and validates rewrites, then returns the optimized query with a plain-English explanation. Supports PostgreSQL, MySQL, and SQLite.',
   ARRAY['sql', 'database', 'performance', 'postgresql'],
   'published',
   51, 67, 12, 890,
@@ -94,9 +94,9 @@ INSERT INTO assets (
 (
   'a0000000-0000-0000-0000-000000000006',
   '00000000-0000-0000-0000-000000000001',
-  'JSON Schema Validator & Fixer',
-  'tool',
-  'Paste a JSON payload alongside its schema; the tool identifies all validation errors, explains each violation in plain English, and returns a corrected payload. Useful for API debugging and contract testing.',
+  'API Contract Validation Agent',
+  'agent',
+  'Give this agent a JSON payload and its schema; it autonomously identifies all validation errors, reasons about each violation, corrects the payload, and iterates until the contract is fully satisfied. Ideal for CI pipelines and API debugging.',
   ARRAY['json', 'validation', 'api', 'debugging'],
   'published',
   38, 45, 8, 672,
@@ -215,11 +215,11 @@ UPDATE assets SET description_sequence = '[
 ]'::jsonb
 WHERE id = 'a0000000-0000-0000-0000-000000000001';
 
--- Asset 4: GitHub PR Auto-Summarizer (text + image + text)
+-- Asset 4: GitHub PR Review Agent (text + image + text)
 UPDATE assets SET description_sequence = '[
   {
     "type": "text",
-    "content": "## What It Does\n\nPaste a raw GitHub pull request diff and the tool returns a **structured, reviewer-ready summary** in under five seconds. It extracts:\n\n- A one-sentence TL;DR\n- Files changed and their purpose\n- Risk areas and suggested test cases\n- Reviewer focus checklist\n\nThe output format is Markdown, suitable for pasting directly into a PR comment or a Slack message."
+    "content": "## What It Does\n\nThis agent autonomously reads a pull request diff, reasons about the changes, and returns a **structured, reviewer-ready summary** in under five seconds. It extracts:\n\n- A one-sentence TL;DR\n- Files changed and their purpose\n- Risk areas and suggested test cases\n- Reviewer focus checklist\n\nThe output format is Markdown, suitable for pasting directly into a PR comment or a Slack message."
   },
   {
     "type": "image",

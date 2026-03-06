@@ -7,13 +7,13 @@ import type { AssetPreview } from '@/lib/data/assets'
 
 // ─── types ────────────────────────────────────────────────────────────────────
 
-type AssetType = 'all' | 'prompt' | 'tool' | 'app' | 'workflow'
+type AssetType = 'all' | 'prompt' | 'agent' | 'app' | 'workflow'
 type SortOrder = 'newest' | 'popular'
 
 const TYPE_CHIPS: { label: string; value: AssetType }[] = [
   { label: 'All',      value: 'all' },
   { label: 'Prompt',   value: 'prompt' },
-  { label: 'Tool',     value: 'tool' },
+  { label: 'Agent',    value: 'agent' },
   { label: 'App',      value: 'app' },
   { label: 'Workflow', value: 'workflow' },
 ]
