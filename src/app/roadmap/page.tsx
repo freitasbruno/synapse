@@ -25,11 +25,6 @@ const SECTIONS: RoadmapSection[] = [
     colorMuted: 'rgba(99,102,241,0.12)',
     items: [
       {
-        title: 'Tag Filter Redesign',
-        description:
-          'Searchable dropdown with multi-select for easier tag discovery in the gallery.',
-      },
-      {
         title: 'Edit Shortcut on Asset Pages',
         description: "Quick access to edit mode directly from an asset's detail page.",
       },
@@ -49,8 +44,13 @@ const SECTIONS: RoadmapSection[] = [
     label: '🛠️ In Development',
     color: '#f59e0b',
     colorMuted: 'rgba(245,158,11,0.12)',
-    items: [],
-    placeholder: 'Check back soon.',
+    items: [
+      {
+        title: 'Tag Filter Redesign',
+        description:
+          'Searchable dropdown with multi-select for easier tag discovery in the gallery.',
+      },
+    ],
   },
   {
     label: '🔭 Future',

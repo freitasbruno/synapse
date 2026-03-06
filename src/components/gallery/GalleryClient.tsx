@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { AssetCard } from './AssetCard'
+import { TagFilterDropdown } from './TagFilterDropdown'
 import type { AssetPreview } from '@/lib/data/assets'
 
 // ─── types ────────────────────────────────────────────────────────────────────
@@ -103,16 +104,8 @@ export function GalleryClient({ assets, allTags, isAuthenticated = false }: Gall
     router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false })
   }
 
-  function toggleTag(tag: string) {
-    const next = selectedTags.includes(tag)
-      ? selectedTags.filter((t) => t !== tag)
-      : [...selectedTags, tag]
-    const qs = buildQs({ search: inputValue, type: typeFilter, sort: sortOrder, tags: next })
-    router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false })
-  }
-
-  function clearTags() {
-    const qs = buildQs({ search: inputValue, type: typeFilter, sort: sortOrder, tags: [] })
+  function setSelectedTags(tags: string[]) {
+    const qs = buildQs({ search: inputValue, type: typeFilter, sort: sortOrder, tags })
     router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false })
   }
 
@@ -212,6 +205,15 @@ export function GalleryClient({ assets, allTags, isAuthenticated = false }: Gall
           })}
         </div>
 
+        {/* Tag filter dropdown */}
+        {allTags.length > 0 && (
+          <TagFilterDropdown
+            allTags={allTags}
+            selectedTags={selectedTags}
+            onChange={setSelectedTags}
+          />
+        )}
+
         {/* Spacer */}
         <div className="flex-1" />
 
@@ -245,44 +247,6 @@ export function GalleryClient({ assets, allTags, isAuthenticated = false }: Gall
           </button>
         )}
       </div>
-
-      {/* ── Tag filter row ── */}
-      {allTags.length > 0 && (
-        <div className="flex items-center gap-2">
-          <div
-            className="flex min-w-0 flex-1 gap-1.5 overflow-x-auto pb-1"
-            style={{ scrollbarWidth: 'none' }}
-          >
-            {allTags.map((tag) => {
-              const isActive = selectedTags.includes(tag)
-              return (
-                <button
-                  key={tag}
-                  onClick={() => toggleTag(tag)}
-                  style={
-                    isActive
-                      ? { backgroundColor: 'var(--accent)', color: '#fff', borderColor: 'var(--accent)' }
-                      : { backgroundColor: 'var(--bg-surface)', color: 'var(--text-secondary)', borderColor: 'var(--bg-border)' }
-                  }
-                  className="shrink-0 rounded-full border px-2.5 py-0.5 text-xs font-medium transition-colors hover:opacity-90"
-                >
-                  #{tag}
-                </button>
-              )
-            })}
-          </div>
-
-          {selectedTags.length > 0 && (
-            <button
-              onClick={clearTags}
-              style={{ color: 'var(--text-secondary)' }}
-              className="shrink-0 text-xs hover:opacity-70"
-            >
-              ✕ Clear tags
-            </button>
-          )}
-        </div>
-      )}
 
       {/* ── Results count ── */}
       <p style={{ color: 'var(--text-secondary)' }} className="text-xs">
