@@ -115,6 +115,51 @@ function VideoBlockRenderer({ block }: { block: VideoBlock }) {
   )
 }
 
+// ─── CopyBlockButton ─────────────────────────────────────────────────────────
+
+function CopyBlockButton({ content }: { content: string }) {
+  const [copied, setCopied] = useState(false)
+
+  async function handleCopy() {
+    if (typeof navigator === 'undefined' || !navigator.clipboard) return
+    try {
+      await navigator.clipboard.writeText(content)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch {
+      // Silent fallback — clipboard unavailable or permission denied
+    }
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={() => void handleCopy()}
+      aria-label={copied ? 'Copied!' : 'Copy block'}
+      title={copied ? 'Copied!' : 'Copy block'}
+      style={
+        copied
+          ? { color: 'var(--accent)', backgroundColor: 'var(--bg-surface)' }
+          : { color: 'var(--text-secondary)' }
+      }
+      className="rounded p-1.5 transition-colors hover:[background-color:var(--bg-surface)] hover:[color:var(--accent)] sm:opacity-0 sm:group-hover:opacity-100"
+    >
+      {copied ? (
+        // Checkmark
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <polyline points="20 6 9 17 4 12" />
+        </svg>
+      ) : (
+        // Clipboard
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <rect x="9" y="2" width="6" height="4" rx="1" />
+          <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+        </svg>
+      )}
+    </button>
+  )
+}
+
 // ─── TextBlockRenderer ────────────────────────────────────────────────────────
 
 function TextBlockRenderer({ block, isDark }: { block: TextBlock; isDark: boolean }) {
@@ -140,10 +185,15 @@ function TextBlockRenderer({ block, isDark }: { block: TextBlock; isDark: boolea
   }
 
   return (
-    <div className="md-content">
-      <ReactMarkdown remarkPlugins={[remarkGfm]} components={codeComponents}>
-        {block.content}
-      </ReactMarkdown>
+    <div className="group relative">
+      <div className="absolute right-0 top-0 z-10">
+        <CopyBlockButton content={block.content} />
+      </div>
+      <div className="md-content">
+        <ReactMarkdown remarkPlugins={[remarkGfm]} components={codeComponents}>
+          {block.content}
+        </ReactMarkdown>
+      </div>
     </div>
   )
 }

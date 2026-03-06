@@ -30,6 +30,10 @@ const SECTIONS: RoadmapSection[] = [
         description:
           'Markdown support, AI refinement, and a guided Prompt Assistant to help you write better prompts.',
       },
+      {
+        title: 'Copy Block Content',
+        description: 'Copy any individual text block from an asset detail page with one click.',
+      },
     ],
   },
   {
@@ -37,10 +41,6 @@ const SECTIONS: RoadmapSection[] = [
     color: '#6366f1',
     colorMuted: 'rgba(99,102,241,0.12)',
     items: [
-      {
-        title: 'Copy Block Content',
-        description: 'Copy any individual text block from an asset detail page with one click.',
-      },
       {
         title: 'Collections',
         description: 'Curate and share named lists of assets.',
