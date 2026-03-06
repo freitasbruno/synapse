@@ -6,6 +6,8 @@ import { createClient } from '@/lib/supabase/client'
 import { SequenceBuilder } from './SequenceBuilder'
 import { SequenceRenderer } from '@/components/asset/SequenceRenderer'
 import { AIStatusIndicator } from './AIStatusIndicator'
+import { PromptEditor } from './PromptEditor'
+import { PromptAssistant } from './PromptAssistant'
 import { assembleAssetContent } from '@/lib/utils/content'
 import type { AssetRow } from '@/lib/data/assets'
 import type { EditorBlock } from './SequenceBuilder'
@@ -532,29 +534,22 @@ export function AssetEditor({ initialData, mode, creatorId }: AssetEditorProps) 
           )}
         </div>
 
-        {/* Prompt content (only for prompt type) */}
+        {/* Prompt editor (only for prompt type) */}
         {type === 'prompt' && (
-          <div>
-            <label
-              htmlFor="prompt_content"
-              style={{ color: 'var(--text-secondary)' }}
-              className="mb-1.5 block text-sm font-medium"
-            >
-              Prompt Text{' '}
-              <span style={{ color: 'var(--text-secondary)' }} className="font-normal">
-                (powers the Copy Prompt button)
-              </span>
-            </label>
-            <textarea
-              id="prompt_content"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              rows={5}
-              placeholder="Enter the full prompt text here…"
-              className="w-full resize-y rounded-lg border px-3 py-2 text-sm outline-none transition-colors focus:[border-color:var(--accent)] placeholder:[color:var(--text-secondary)]"
-              style={fieldStyle}
-            />
-          </div>
+          <PromptEditor
+            value={content}
+            onChange={setContent}
+            assetTitle={title.trim() || 'Untitled Asset'}
+            assetType={type}
+          />
+        )}
+
+        {/* Prompt assistant (only for prompt type) */}
+        {type === 'prompt' && (
+          <PromptAssistant
+            assetTitle={title.trim() || 'Untitled Asset'}
+            onInsert={setContent}
+          />
         )}
       </div>
 
