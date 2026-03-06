@@ -34,6 +34,10 @@ const SECTIONS: RoadmapSection[] = [
         title: 'Copy Block Content',
         description: 'Copy any individual text block from an asset detail page with one click.',
       },
+      {
+        title: 'Collections',
+        description: 'Curate and share named lists of assets.',
+      },
     ],
   },
   {
@@ -41,10 +45,6 @@ const SECTIONS: RoadmapSection[] = [
     color: '#6366f1',
     colorMuted: 'rgba(99,102,241,0.12)',
     items: [
-      {
-        title: 'Collections',
-        description: 'Curate and share named lists of assets.',
-      },
       {
         title: 'Follow Creators',
         description: 'Subscribe to creators you love.',

@@ -38,6 +38,13 @@ export async function Header({ transparent = false }: HeaderProps) {
 
         {/* Nav links */}
         <Link
+          href="/collections"
+          style={{ color: 'var(--text-secondary)' }}
+          className="mr-3 hidden text-sm transition-colors hover:[color:var(--text-primary)] sm:block"
+        >
+          Collections
+        </Link>
+        <Link
           href="/roadmap"
           style={{ color: 'var(--text-secondary)' }}
           className="mr-3 hidden text-sm transition-colors hover:[color:var(--text-primary)] sm:block"

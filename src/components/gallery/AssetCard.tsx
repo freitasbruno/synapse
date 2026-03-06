@@ -7,6 +7,7 @@ import { TagBadge } from '@/components/ui/TagBadge'
 import { ActionButtons } from '@/components/ui/ActionButtons'
 import { StarButton } from '@/components/ui/StarButton'
 import { GoldBadge } from '@/components/ui/GoldBadge'
+import { AddToCollectionButton } from '@/components/collections/AddToCollectionButton'
 import type { AssetPreview } from '@/lib/data/assets'
 
 // ─── type badge colours ───────────────────────────────────────────────────────
@@ -70,9 +71,12 @@ export function AssetCard({ asset, isAuthenticated = false }: { asset: AssetPrev
           {TYPE_LABELS[asset.type]}
         </span>
 
-        {asset.is_manager_validated && (
-          <GoldBadge size="sm" />
-        )}
+        <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+          {asset.is_manager_validated && (
+            <GoldBadge size="sm" />
+          )}
+          <AddToCollectionButton assetId={asset.id} isAuthenticated={isAuthenticated} />
+        </div>
       </div>
 
       {/* ── title — real link for accessibility/keyboard ── */}

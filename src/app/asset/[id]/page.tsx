@@ -13,6 +13,7 @@ import { formatCount } from '@/lib/utils/format'
 import { getAssetById, getStarStatus } from '@/lib/data/assets'
 import { getCommentsByAsset } from '@/lib/data/comments'
 import { getCurrentUser } from '@/lib/auth/session'
+import { AddToCollectionButton } from '@/components/collections/AddToCollectionButton'
 import type { AssetRow } from '@/lib/data/assets'
 
 // ─── badge configs ────────────────────────────────────────────────────────────
@@ -157,6 +158,7 @@ export default async function AssetPage({
               <ViewIcon />
               {formatCount(asset.view_count)}
             </span>
+            <AddToCollectionButton assetId={asset.id} isAuthenticated={isAuthenticated} />
           </div>
 
           {/* Manager controls — server-side gated, never shown to non-managers */}

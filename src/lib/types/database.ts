@@ -243,6 +243,84 @@ export interface Database {
         }
         Relationships: []
       }
+      collections: {
+        Row: {
+          id: string
+          user_id: string
+          title: string
+          description: string | null
+          visibility: 'public' | 'private'
+          star_count: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          title: string
+          description?: string | null
+          visibility?: 'public' | 'private'
+          star_count?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          title?: string
+          description?: string | null
+          visibility?: 'public' | 'private'
+          star_count?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      collection_assets: {
+        Row: {
+          id: string
+          collection_id: string
+          asset_id: string
+          position: number
+          added_at: string
+        }
+        Insert: {
+          id?: string
+          collection_id: string
+          asset_id: string
+          position?: number
+          added_at?: string
+        }
+        Update: {
+          id?: string
+          collection_id?: string
+          asset_id?: string
+          position?: number
+          added_at?: string
+        }
+        Relationships: []
+      }
+      collection_stars: {
+        Row: {
+          id: string
+          collection_id: string
+          user_id: string
+          created_at: string
+        }
+        Insert: {
+          id: string
+          collection_id: string
+          user_id: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          collection_id?: string
+          user_id?: string
+          created_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: Record<string, never>
     Functions: {
@@ -266,6 +344,10 @@ export interface Database {
         Args: { p_comment_id: string; p_asset_id: string }
         Returns: undefined
       }
+      toggle_collection_star: {
+        Args: { p_collection_id: string; p_user_id: string }
+        Returns: { starred: boolean; star_count: number }
+      }
     }
     Enums: Record<string, never>
   }
@@ -279,3 +361,6 @@ export type VoteRow = Database['public']['Tables']['votes']['Row']
 export type ActivityLogRow = Database['public']['Tables']['activity_logs']['Row']
 export type AiUsageLogRow = Database['public']['Tables']['ai_usage_logs']['Row']
 export type SystemStatsRow = Database['public']['Tables']['system_stats']['Row']
+export type CollectionRow = Database['public']['Tables']['collections']['Row']
+export type CollectionAssetRow = Database['public']['Tables']['collection_assets']['Row']
+export type CollectionStarRow = Database['public']['Tables']['collection_stars']['Row']
