@@ -62,6 +62,7 @@ export default async function AssetPage({
 
   const isAuthenticated = Boolean(user)
   const isManager = user?.role === 'manager'
+  const canEdit = isManager || user?.id === asset.creator_id
 
   const [comments, initialStarred] = await Promise.all([
     getCommentsByAsset(asset.id),
@@ -86,12 +87,27 @@ export default async function AssetPage({
         {/* ── Asset header ── */}
         <div className="mt-6">
 
-          {/* Badges row */}
-          <div className="flex items-center gap-2">
-            <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${TYPE_STYLES[asset.type]}`}>
-              {TYPE_LABELS[asset.type]}
-            </span>
-            {asset.is_manager_validated && <GoldBadge />}
+          {/* Badges row + edit button */}
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${TYPE_STYLES[asset.type]}`}>
+                {TYPE_LABELS[asset.type]}
+              </span>
+              {asset.is_manager_validated && <GoldBadge />}
+            </div>
+            {canEdit && (
+              <Link
+                href={`/asset/${asset.id}/edit`}
+                style={{ borderColor: 'var(--bg-border)', color: 'var(--text-secondary)' }}
+                className="inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors hover:[border-color:var(--accent)] hover:[color:var(--accent)]"
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                </svg>
+                Edit Asset
+              </Link>
+            )}
           </div>
 
           {/* Title */}

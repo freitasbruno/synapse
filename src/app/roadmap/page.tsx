@@ -25,10 +25,6 @@ const SECTIONS: RoadmapSection[] = [
     colorMuted: 'rgba(99,102,241,0.12)',
     items: [
       {
-        title: 'Edit Shortcut on Asset Pages',
-        description: "Quick access to edit mode directly from an asset's detail page.",
-      },
-      {
         title: 'Prompt Editor Upgrade',
         description:
           'Markdown support, AI refinement, and a guided Prompt Assistant to help you write better prompts.',
@@ -49,6 +45,10 @@ const SECTIONS: RoadmapSection[] = [
         title: 'Tag Filter Redesign',
         description:
           'Searchable dropdown with multi-select for easier tag discovery in the gallery.',
+      },
+      {
+        title: 'Edit Shortcut on Asset Pages',
+        description: "Quick access to edit mode directly from an asset's detail page.",
       },
     ],
   },
