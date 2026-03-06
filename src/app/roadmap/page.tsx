@@ -21,18 +21,6 @@ interface RoadmapSection {
 
 const SECTIONS: RoadmapSection[] = [
   {
-    label: '🚀 Coming Soon',
-    color: '#6366f1',
-    colorMuted: 'rgba(99,102,241,0.12)',
-    items: [
-      {
-        title: 'Copy Block Content',
-        description:
-          'Copy any individual text block from an asset detail page with one click.',
-      },
-    ],
-  },
-  {
     label: '🛠️ In Development',
     color: '#f59e0b',
     colorMuted: 'rgba(245,158,11,0.12)',
@@ -45,28 +33,14 @@ const SECTIONS: RoadmapSection[] = [
     ],
   },
   {
-    label: '✅ Shipped',
-    color: '#22c55e',
-    colorMuted: 'rgba(34,197,94,0.12)',
+    label: '📋 Planned',
+    color: '#6366f1',
+    colorMuted: 'rgba(99,102,241,0.12)',
     items: [
       {
-        title: 'Tag Filter Redesign',
-        description:
-          'Searchable dropdown with multi-select for easier tag discovery in the gallery.',
-        live: true,
+        title: 'Copy Block Content',
+        description: 'Copy any individual text block from an asset detail page with one click.',
       },
-      {
-        title: 'Edit Shortcut on Asset Pages',
-        description: "Quick access to edit mode directly from an asset's detail page.",
-        live: true,
-      },
-    ],
-  },
-  {
-    label: '🔭 Future',
-    color: '#10b981',
-    colorMuted: 'rgba(16,185,129,0.12)',
-    items: [
       {
         title: 'Collections',
         description: 'Curate and share named lists of assets.',
@@ -88,8 +62,31 @@ const SECTIONS: RoadmapSection[] = [
         description: 'Track how your assets evolve over time.',
       },
       {
+        title: 'AI Research Agent',
+        description:
+          'An AI agent that researches business domains, finds the best real-world AI use cases, and drafts them for manager review.',
+      },
+      {
         title: 'Public API',
         description: 'Query the Synapse library programmatically.',
+      },
+    ],
+  },
+  {
+    label: '✅ Shipped',
+    color: '#22c55e',
+    colorMuted: 'rgba(34,197,94,0.12)',
+    items: [
+      {
+        title: 'Tag Filter Redesign',
+        description:
+          'Searchable dropdown with multi-select for easier tag discovery in the gallery.',
+        live: true,
+      },
+      {
+        title: 'Edit Shortcut on Asset Pages',
+        description: "Quick access to edit mode directly from an asset's detail page.",
+        live: true,
       },
     ],
   },
@@ -186,7 +183,7 @@ export default function RoadmapPage() {
         </div>
 
         {/* Three-column grid */}
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-8 sm:grid-cols-3">
           {SECTIONS.map((section) => (
             <Section key={section.label} section={section} />
           ))}
