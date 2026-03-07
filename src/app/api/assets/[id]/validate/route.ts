@@ -33,7 +33,7 @@ export async function POST(
   // Fetch current value
   const { data: asset, error: fetchError } = await supabase
     .from('assets')
-    .select('is_manager_validated')
+    .select('is_manager_validated, creator_id')
     .eq('id', assetId)
     .single()
 
@@ -51,6 +51,22 @@ export async function POST(
   if (updateError) {
     console.error('[validate] update error:', updateError.message)
     return NextResponse.json({ error: 'Failed to update validation status' }, { status: 500 })
+  }
+
+  // Fire-and-forget: notify asset owner when validated (not when unvalidated)
+  if (newValue && asset.creator_id) {
+    void (async () => {
+      try {
+        await supabase.rpc('create_notification', {
+          p_user_id: asset.creator_id,
+          p_type: 'asset_validated',
+          p_actor_id: user.id,
+          p_asset_id: assetId,
+        })
+      } catch {
+        // ignore
+      }
+    })()
   }
 
   return NextResponse.json({ is_manager_validated: newValue })

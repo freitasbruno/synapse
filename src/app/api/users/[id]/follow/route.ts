@@ -28,5 +28,22 @@ export async function POST(
     return NextResponse.json({ error: 'Failed to toggle follow' }, { status: 500 })
   }
 
-  return NextResponse.json(data as { following: boolean })
+  const result = data as { following: boolean }
+
+  // Fire-and-forget: notify the followed user on new follow
+  if (result.following) {
+    void (async () => {
+      try {
+        await supabase.rpc('create_notification', {
+          p_user_id: targetId,
+          p_type: 'new_follower',
+          p_actor_id: user.id,
+        })
+      } catch {
+        // ignore
+      }
+    })()
+  }
+
+  return NextResponse.json(result)
 }

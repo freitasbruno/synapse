@@ -342,6 +342,39 @@ export interface Database {
         }
         Relationships: []
       }
+      notifications: {
+        Row: {
+          id: string
+          user_id: string
+          type: 'new_star' | 'new_comment' | 'asset_validated' | 'new_follower'
+          actor_id: string | null
+          asset_id: string | null
+          collection_id: string | null
+          read: boolean
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          type: 'new_star' | 'new_comment' | 'asset_validated' | 'new_follower'
+          actor_id?: string | null
+          asset_id?: string | null
+          collection_id?: string | null
+          read?: boolean
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          type?: 'new_star' | 'new_comment' | 'asset_validated' | 'new_follower'
+          actor_id?: string | null
+          asset_id?: string | null
+          collection_id?: string | null
+          read?: boolean
+          created_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: Record<string, never>
     Functions: {
@@ -377,6 +410,24 @@ export interface Database {
         Args: { p_user_id: string }
         Returns: { followers: number; following: number }
       }
+      create_notification: {
+        Args: {
+          p_user_id: string
+          p_type: string
+          p_actor_id?: string | null
+          p_asset_id?: string | null
+          p_collection_id?: string | null
+        }
+        Returns: string | null
+      }
+      get_unread_notification_count: {
+        Args: { p_user_id: string }
+        Returns: number
+      }
+      mark_all_notifications_read: {
+        Args: { p_user_id: string }
+        Returns: undefined
+      }
     }
     Enums: Record<string, never>
   }
@@ -394,3 +445,11 @@ export type CollectionRow = Database['public']['Tables']['collections']['Row']
 export type CollectionAssetRow = Database['public']['Tables']['collection_assets']['Row']
 export type CollectionStarRow = Database['public']['Tables']['collection_stars']['Row']
 export type FollowRow = Database['public']['Tables']['follows']['Row']
+export type NotificationRow = Database['public']['Tables']['notifications']['Row']
+
+export type NotificationType = NotificationRow['type']
+
+export interface NotificationWithDetails extends NotificationRow {
+  actor?: { id: string; display_name: string; photo_url: string | null } | null
+  asset?: { id: string; title: string; type: string } | null
+}

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth/session'
+import { createClient } from '@/lib/supabase/server'
 import { addComment } from '@/lib/data/comments'
 import type { CommentRow } from '@/lib/types/database'
 
@@ -47,6 +48,28 @@ export async function POST(
     text,
     created_at: new Date().toISOString(),
   }
+
+  // Fire-and-forget: notify asset owner on new comment
+  void (async () => {
+    try {
+      const supabase = await createClient()
+      const { data: asset } = await supabase
+        .from('assets')
+        .select('creator_id')
+        .eq('id', assetId)
+        .single()
+      if (asset?.creator_id) {
+        await supabase.rpc('create_notification', {
+          p_user_id: asset.creator_id,
+          p_type: 'new_comment',
+          p_actor_id: user.id,
+          p_asset_id: assetId,
+        })
+      }
+    } catch {
+      // ignore
+    }
+  })()
 
   return NextResponse.json(comment, { status: 201 })
 }

@@ -24,5 +24,30 @@ export async function POST(
     return NextResponse.json({ error: 'Failed to toggle star' }, { status: 500 })
   }
 
-  return NextResponse.json(data as { starred: boolean; star_count: number })
+  const result = data as { starred: boolean; star_count: number }
+
+  // Fire-and-forget: notify asset owner on new star
+  if (result.starred) {
+    void (async () => {
+      try {
+        const { data: asset } = await supabase
+          .from('assets')
+          .select('creator_id')
+          .eq('id', assetId)
+          .single()
+        if (asset?.creator_id) {
+          await supabase.rpc('create_notification', {
+            p_user_id: asset.creator_id,
+            p_type: 'new_star',
+            p_actor_id: user.id,
+            p_asset_id: assetId,
+          })
+        }
+      } catch {
+        // ignore
+      }
+    })()
+  }
+
+  return NextResponse.json(result)
 }

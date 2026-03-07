@@ -42,6 +42,10 @@ const SECTIONS: RoadmapSection[] = [
         title: 'Follow Creators',
         description: 'Subscribe to creators you love and get a personalised feed of their latest assets.',
       },
+      {
+        title: 'Notifications',
+        description: 'Get notified when someone stars or comments on your assets.',
+      },
     ],
   },
   {
@@ -49,10 +53,6 @@ const SECTIONS: RoadmapSection[] = [
     color: '#6366f1',
     colorMuted: 'rgba(99,102,241,0.12)',
     items: [
-      {
-        title: 'Notifications',
-        description: 'Get notified when someone stars or comments on your assets.',
-      },
       {
         title: 'Embed Widget',
         description: 'Embed any asset as an iframe on external sites.',

@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { ThemeToggle } from './ThemeToggle'
 import { HeaderClient } from './HeaderClient'
 import { HeaderShell } from './HeaderShell'
+import { NotificationBell } from '@/components/ui/NotificationBell'
 import { getCurrentUser } from '@/lib/auth/session'
 
 interface HeaderProps {
@@ -55,6 +56,7 @@ export async function Header({ transparent = false }: HeaderProps) {
         {/* Right actions */}
         <div className="flex items-center gap-3">
           <ThemeToggle />
+          {user && <NotificationBell />}
           <HeaderClient user={user} />
         </div>
       </div>
