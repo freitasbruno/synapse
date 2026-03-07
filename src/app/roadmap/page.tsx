@@ -24,35 +24,18 @@ const SECTIONS: RoadmapSection[] = [
     label: '🛠️ In Development',
     color: '#f59e0b',
     colorMuted: 'rgba(245,158,11,0.12)',
-    items: [
-      {
-        title: 'Prompt Editor Upgrade',
-        description:
-          'Markdown support, AI refinement, and a guided Prompt Assistant to help you write better prompts.',
-      },
-      {
-        title: 'Copy Block Content',
-        description: 'Copy any individual text block from an asset detail page with one click.',
-      },
-      {
-        title: 'Collections',
-        description: 'Curate and share named lists of assets.',
-      },
-      {
-        title: 'Follow Creators',
-        description: 'Subscribe to creators you love and get a personalised feed of their latest assets.',
-      },
-      {
-        title: 'Notifications',
-        description: 'Get notified when someone stars or comments on your assets.',
-      },
-    ],
+    placeholder: 'Check back soon.',
+    items: [],
   },
   {
     label: '📋 Planned',
     color: '#6366f1',
     colorMuted: 'rgba(99,102,241,0.12)',
     items: [
+      {
+        title: 'Copy Block Content',
+        description: 'Copy any individual text block from an asset detail page with one click.',
+      },
       {
         title: 'Embed Widget',
         description: 'Embed any asset as an iframe on external sites.',
@@ -77,6 +60,26 @@ const SECTIONS: RoadmapSection[] = [
     color: '#22c55e',
     colorMuted: 'rgba(34,197,94,0.12)',
     items: [
+      {
+        title: 'Notifications',
+        description: 'Get notified when someone stars or comments on your assets.',
+        live: true,
+      },
+      {
+        title: 'Follow Creators',
+        description: 'Subscribe to creators you love and get a personalised feed of their latest assets.',
+        live: true,
+      },
+      {
+        title: 'Collections',
+        description: 'Curate and share named lists of assets.',
+        live: true,
+      },
+      {
+        title: 'Auth Email Templates',
+        description: 'Branded transactional emails for signup, password reset, email change, and invites.',
+        live: true,
+      },
       {
         title: 'Tag Filter Redesign',
         description:
