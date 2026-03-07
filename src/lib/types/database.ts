@@ -321,6 +321,27 @@ export interface Database {
         }
         Relationships: []
       }
+      follows: {
+        Row: {
+          id: string
+          follower_id: string
+          following_id: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          follower_id: string
+          following_id: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          follower_id?: string
+          following_id?: string
+          created_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: Record<string, never>
     Functions: {
@@ -348,6 +369,14 @@ export interface Database {
         Args: { p_collection_id: string; p_user_id: string }
         Returns: { starred: boolean; star_count: number }
       }
+      toggle_follow: {
+        Args: { p_follower_id: string; p_following_id: string }
+        Returns: { following: boolean }
+      }
+      get_follow_counts: {
+        Args: { p_user_id: string }
+        Returns: { followers: number; following: number }
+      }
     }
     Enums: Record<string, never>
   }
@@ -364,3 +393,4 @@ export type SystemStatsRow = Database['public']['Tables']['system_stats']['Row']
 export type CollectionRow = Database['public']['Tables']['collections']['Row']
 export type CollectionAssetRow = Database['public']['Tables']['collection_assets']['Row']
 export type CollectionStarRow = Database['public']['Tables']['collection_stars']['Row']
+export type FollowRow = Database['public']['Tables']['follows']['Row']

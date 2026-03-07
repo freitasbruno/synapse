@@ -541,6 +541,7 @@ export function AssetEditor({ initialData, mode, creatorId }: AssetEditorProps) 
             onChange={setContent}
             assetTitle={title.trim() || 'Untitled Asset'}
             assetType={type}
+            mode={viewMode}
           />
         )}
 

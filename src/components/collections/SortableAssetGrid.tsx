@@ -94,7 +94,7 @@ function SortableItem({
         ✕
       </button>
 
-      <AssetCard asset={asset as AssetPreview} isAuthenticated />
+      <AssetCard asset={asset as unknown as AssetPreview} isAuthenticated />
     </div>
   )
 }
@@ -152,7 +152,7 @@ export function SortableAssetGrid({ initialAssets, collectionId, isOwner }: Prop
     return (
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {assets.map((asset) => (
-          <AssetCard key={asset.id} asset={asset as AssetPreview} isAuthenticated />
+          <AssetCard key={asset.id} asset={asset as unknown as AssetPreview} isAuthenticated />
         ))}
       </div>
     )

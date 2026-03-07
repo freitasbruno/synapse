@@ -6,6 +6,7 @@ export type AssetRow = Database['public']['Tables']['assets']['Row']
 export type AssetPreview = Pick<
   Database['public']['Tables']['assets']['Row'],
   | 'id'
+  | 'creator_id'
   | 'title'
   | 'type'
   | 'description'
@@ -18,10 +19,18 @@ export type AssetPreview = Pick<
   | 'view_count'
   | 'is_manager_validated'
   | 'created_at'
->
+> & { creator_display_name: string }
 
 const SELECT_COLUMNS =
-  'id, title, type, description, content, external_url, tags, vote_count, star_count, comment_count, view_count, is_manager_validated, created_at' as const
+  'id, creator_id, title, type, description, content, external_url, tags, vote_count, star_count, comment_count, view_count, is_manager_validated, created_at, users!creator_id ( display_name )' as const
+
+function mapPreview(row: Record<string, unknown>): AssetPreview {
+  const users = row.users as { display_name: string } | null
+  return {
+    ...(row as Omit<AssetPreview, 'creator_display_name'>),
+    creator_display_name: users?.display_name ?? '',
+  } as AssetPreview
+}
 
 export async function getPublishedAssets(): Promise<AssetPreview[]> {
   const supabase = await createClient()
@@ -38,7 +47,27 @@ export async function getPublishedAssets(): Promise<AssetPreview[]> {
     return []
   }
 
-  return (data ?? []) as AssetPreview[]
+  return (data ?? []).map((row) => mapPreview(row as unknown as Record<string, unknown>))
+}
+
+export async function getFeedAssets(followingIds: string[]): Promise<AssetPreview[]> {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from('assets')
+    .select(SELECT_COLUMNS)
+    .in('creator_id', followingIds)
+    .eq('status', 'published')
+    .eq('visibility', 'public')
+    .order('created_at', { ascending: false })
+    .limit(50)
+
+  if (error) {
+    console.error('[getFeedAssets] Supabase error:', error.message)
+    return []
+  }
+
+  return (data ?? []).map((row) => mapPreview(row as unknown as Record<string, unknown>))
 }
 
 export async function getPublishedAssetCount(): Promise<number> {
@@ -148,6 +177,25 @@ export async function getStarStatus(assetId: string, userId: string): Promise<bo
     p_user_id: userId,
   })
   return Boolean(data)
+}
+
+export async function getPublishedAssetsByCreator(creatorId: string): Promise<AssetPreview[]> {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from('assets')
+    .select(SELECT_COLUMNS)
+    .eq('creator_id', creatorId)
+    .eq('status', 'published')
+    .eq('visibility', 'public')
+    .order('created_at', { ascending: false })
+
+  if (error) {
+    console.error('[getPublishedAssetsByCreator] Supabase error:', error.message)
+    return []
+  }
+
+  return (data ?? []).map((row) => mapPreview(row as unknown as Record<string, unknown>))
 }
 
 export async function getAssetsByCreator(creatorId: string): Promise<AssetRow[]> {

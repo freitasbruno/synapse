@@ -38,6 +38,10 @@ const SECTIONS: RoadmapSection[] = [
         title: 'Collections',
         description: 'Curate and share named lists of assets.',
       },
+      {
+        title: 'Follow Creators',
+        description: 'Subscribe to creators you love and get a personalised feed of their latest assets.',
+      },
     ],
   },
   {
@@ -45,10 +49,6 @@ const SECTIONS: RoadmapSection[] = [
     color: '#6366f1',
     colorMuted: 'rgba(99,102,241,0.12)',
     items: [
-      {
-        title: 'Follow Creators',
-        description: 'Subscribe to creators you love.',
-      },
       {
         title: 'Notifications',
         description: 'Get notified when someone stars or comments on your assets.',

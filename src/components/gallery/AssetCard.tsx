@@ -91,13 +91,13 @@ export function AssetCard({ asset, isAuthenticated = false }: { asset: AssetPrev
         </Link>
       </h3>
 
-      {/* ── description ── */}
-      {asset.description && (
+      {/* ── description / content preview ── */}
+      {(asset.description ?? asset.content) && (
         <p
           style={{ color: 'var(--text-secondary)' }}
           className="mb-3 line-clamp-3 text-xs leading-relaxed"
         >
-          {asset.description}
+          {asset.description ?? asset.content}
         </p>
       )}
 
@@ -129,6 +129,16 @@ export function AssetCard({ asset, isAuthenticated = false }: { asset: AssetPrev
         }}
         className="flex items-center gap-4 border-t pt-3 text-xs"
       >
+        {asset.creator_display_name && (
+          <Link
+            href={`/users/${asset.creator_id}`}
+            onClick={(e) => e.stopPropagation()}
+            style={{ color: 'var(--text-secondary)' }}
+            className="truncate text-xs hover:underline"
+          >
+            {asset.creator_display_name}
+          </Link>
+        )}
         <StarButton
           assetId={asset.id}
           initialStarCount={asset.star_count}

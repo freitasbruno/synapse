@@ -148,6 +148,14 @@ export function HeaderClient({ user }: HeaderClientProps) {
           >
             My Assets
           </Link>
+          <Link
+            href="/feed"
+            onClick={() => setDropdownOpen(false)}
+            style={{ color: 'var(--text-primary)' }}
+            className="block px-4 py-2 text-sm transition-colors hover:[background-color:var(--bg-border)]"
+          >
+            Following
+          </Link>
           {user.role === 'manager' && (
             <Link
               href="/admin/overview"

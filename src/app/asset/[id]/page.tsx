@@ -14,6 +14,7 @@ import { getAssetById, getStarStatus } from '@/lib/data/assets'
 import { getCommentsByAsset } from '@/lib/data/comments'
 import { getCurrentUser } from '@/lib/auth/session'
 import { AddToCollectionButton } from '@/components/collections/AddToCollectionButton'
+import { PromptContentBlock } from '@/components/asset/PromptContentBlock'
 import type { AssetRow } from '@/lib/data/assets'
 
 // ─── badge configs ────────────────────────────────────────────────────────────
@@ -177,6 +178,19 @@ export default async function AssetPage({
           {/* Divider */}
           <hr style={{ borderColor: 'var(--bg-border)' }} className="mt-8" />
         </div>
+
+        {/* ── Prompt content (prompt type only) ── */}
+        {asset.type === 'prompt' && asset.content && (
+          <div className="mt-8">
+            <h2
+              style={{ color: 'var(--text-secondary)' }}
+              className="mb-3 text-sm font-semibold uppercase tracking-wide"
+            >
+              Prompt
+            </h2>
+            <PromptContentBlock content={asset.content} />
+          </div>
+        )}
 
         {/* ── Content sequence ── */}
         <div className="mt-8">

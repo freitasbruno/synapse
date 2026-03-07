@@ -35,6 +35,14 @@ CREATE INDEX collection_assets_collection_id_idx ON collection_assets(collection
 CREATE INDEX collection_assets_position_idx ON collection_assets(collection_id, position);
 
 -- Auto-update updated_at
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = now();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
 CREATE TRIGGER update_collections_updated_at
   BEFORE UPDATE ON collections
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();

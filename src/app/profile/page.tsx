@@ -6,6 +6,7 @@ import { getCurrentUser } from '@/lib/auth/session'
 import { updateUser } from '@/lib/data/users'
 import { getAssetsByCreator } from '@/lib/data/assets'
 import { getCollectionsByUser, deleteCollection } from '@/lib/data/collections'
+import { getFollowCounts } from '@/lib/data/follows'
 import { AssetCard } from '@/components/gallery/AssetCard'
 import type { AssetPreview } from '@/lib/data/assets'
 
@@ -41,9 +42,10 @@ export default async function ProfilePage() {
   const user = await getCurrentUser()
   if (!user) redirect('/')
 
-  const [assets, collections] = await Promise.all([
+  const [assets, collections, followCounts] = await Promise.all([
     getAssetsByCreator(user.id),
     getCollectionsByUser(user.id),
+    getFollowCounts(user.id),
   ])
 
   async function deleteMyCollection(formData: FormData) {
@@ -114,6 +116,12 @@ export default async function ProfilePage() {
 
             <p style={{ color: 'var(--text-secondary)' }} className="mt-0.5 text-sm">
               {user.email}
+            </p>
+
+            <p style={{ color: 'var(--text-secondary)' }} className="mt-1 text-sm">
+              {followCounts.followers}{' '}
+              {followCounts.followers === 1 ? 'follower' : 'followers'} · {followCounts.following}{' '}
+              following
             </p>
 
             {user.bio && (
@@ -311,7 +319,7 @@ export default async function ProfilePage() {
               {assets.map((asset) => (
                 <AssetCard
                   key={asset.id}
-                  asset={asset as AssetPreview}
+                  asset={{ ...asset, creator_display_name: user.display_name } as unknown as AssetPreview}
                   isAuthenticated
                 />
               ))}

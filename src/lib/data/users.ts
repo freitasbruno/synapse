@@ -45,6 +45,20 @@ export async function createUser(input: {
   return data as UserRow
 }
 
+export async function getUserById(id: string): Promise<UserRow | null> {
+  const supabase = await createClient()
+  const { data, error } = await supabase.from('users').select('*').eq('id', id).single()
+
+  if (error) {
+    if (error.code !== 'PGRST116') {
+      console.error('[getUserById] error:', error.message)
+    }
+    return null
+  }
+
+  return data as UserRow
+}
+
 export async function updateUser(
   id: string,
   updates: {
