@@ -9,7 +9,7 @@ export async function POST(request: NextRequest, { params }: Params) {
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { id } = await params
-  const collection = await getCollectionById(id, user.id)
+  const collection = await getCollectionById(id)
   if (!collection) return NextResponse.json({ error: 'Not found' }, { status: 404 })
   if (collection.user_id !== user.id) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 

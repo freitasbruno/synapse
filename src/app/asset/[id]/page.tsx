@@ -13,6 +13,7 @@ import { formatCount } from '@/lib/utils/format'
 import { getAssetById, getStarStatus } from '@/lib/data/assets'
 import { getCommentsByAsset } from '@/lib/data/comments'
 import { getCurrentUser } from '@/lib/auth/session'
+import { getUserById } from '@/lib/data/users'
 import { AddToCollectionButton } from '@/components/collections/AddToCollectionButton'
 import { PromptContentBlock } from '@/components/asset/PromptContentBlock'
 import type { AssetRow } from '@/lib/data/assets'
@@ -66,9 +67,10 @@ export default async function AssetPage({
   const isManager = user?.role === 'manager'
   const canEdit = isManager || user?.id === asset.creator_id
 
-  const [comments, initialStarred] = await Promise.all([
+  const [comments, initialStarred, creator] = await Promise.all([
     getCommentsByAsset(asset.id),
     user ? getStarStatus(asset.id, user.id) : Promise.resolve(false),
+    asset.creator_id ? getUserById(asset.creator_id) : Promise.resolve(null),
   ])
 
   return (
@@ -139,6 +141,23 @@ export default async function AssetPage({
             </div>
           )}
 
+          {/* Creator link */}
+          {creator && (
+            <div className="mt-4">
+              <Link
+                href={`/users/${creator.id}`}
+                style={{ color: 'var(--text-secondary)' }}
+                className="inline-flex items-center gap-1.5 text-sm transition-colors hover:[color:var(--text-primary)]"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+                {creator.display_name}
+              </Link>
+            </div>
+          )}
+
           {/* Metadata row */}
           <div
             style={{ color: 'var(--text-secondary)' }}
@@ -159,7 +178,7 @@ export default async function AssetPage({
               <ViewIcon />
               {formatCount(asset.view_count)}
             </span>
-            <AddToCollectionButton assetId={asset.id} isAuthenticated={isAuthenticated} />
+            <AddToCollectionButton assetId={asset.id} assetTitle={asset.title} isAuthenticated={isAuthenticated} />
           </div>
 
           {/* Manager controls — server-side gated, never shown to non-managers */}

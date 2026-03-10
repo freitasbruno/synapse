@@ -11,10 +11,9 @@ function StarIcon() {
 
 interface Props {
   collection: CollectionPreview
-  showVisibility?: boolean
 }
 
-export function CollectionCard({ collection, showVisibility = false }: Props) {
+export function CollectionCard({ collection }: Props) {
   return (
     <Link
       href={`/collections/${collection.id}`}
@@ -24,22 +23,12 @@ export function CollectionCard({ collection, showVisibility = false }: Props) {
         borderColor: 'var(--bg-border)',
       }}
     >
-      <div className="flex items-start justify-between gap-2">
-        <h3
-          className="line-clamp-2 text-sm font-semibold leading-snug"
-          style={{ color: 'var(--text-primary)' }}
-        >
-          {collection.title}
-        </h3>
-        {showVisibility && collection.visibility === 'private' && (
-          <span
-            className="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium"
-            style={{ backgroundColor: 'rgba(99,102,241,0.12)', color: '#818cf8' }}
-          >
-            Private
-          </span>
-        )}
-      </div>
+      <h3
+        className="line-clamp-2 text-sm font-semibold leading-snug"
+        style={{ color: 'var(--text-primary)' }}
+      >
+        {collection.title}
+      </h3>
 
       {collection.description && (
         <p

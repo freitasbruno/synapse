@@ -138,7 +138,15 @@ export function HeaderClient({ user }: HeaderClientProps) {
             style={{ color: 'var(--text-primary)' }}
             className="block px-4 py-2 text-sm transition-colors hover:[background-color:var(--bg-border)]"
           >
-            My Profile
+            Profile
+          </Link>
+          <Link
+            href="/collections"
+            onClick={() => setDropdownOpen(false)}
+            style={{ color: 'var(--text-primary)' }}
+            className="block px-4 py-2 text-sm transition-colors hover:[background-color:var(--bg-border)]"
+          >
+            Collections
           </Link>
           <Link
             href="/dashboard"

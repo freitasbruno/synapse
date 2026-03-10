@@ -9,11 +9,11 @@ export async function PATCH(request: NextRequest, { params }: Params) {
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { id } = await params
-  const collection = await getCollectionById(id, user.id)
+  const collection = await getCollectionById(id)
   if (!collection) return NextResponse.json({ error: 'Not found' }, { status: 404 })
   if (collection.user_id !== user.id) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
-  let body: { title?: string; description?: string; visibility?: string }
+  let body: { title?: string; description?: string }
   try {
     body = (await request.json()) as typeof body
   } catch {
@@ -23,9 +23,6 @@ export async function PATCH(request: NextRequest, { params }: Params) {
   const update: Parameters<typeof updateCollection>[1] = {}
   if (body.title !== undefined) update.title = body.title.trim()
   if (body.description !== undefined) update.description = body.description.trim() || null
-  if (body.visibility === 'public' || body.visibility === 'private') {
-    update.visibility = body.visibility
-  }
 
   const { error } = await updateCollection(id, update)
   if (error) return NextResponse.json({ error }, { status: 500 })
@@ -38,7 +35,7 @@ export async function DELETE(_request: NextRequest, { params }: Params) {
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { id } = await params
-  const collection = await getCollectionById(id, user.id)
+  const collection = await getCollectionById(id)
   if (!collection) return NextResponse.json({ error: 'Not found' }, { status: 404 })
   if (collection.user_id !== user.id) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 

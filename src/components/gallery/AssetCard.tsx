@@ -75,7 +75,7 @@ export function AssetCard({ asset, isAuthenticated = false }: { asset: AssetPrev
           {asset.is_manager_validated && (
             <GoldBadge size="sm" />
           )}
-          <AddToCollectionButton assetId={asset.id} isAuthenticated={isAuthenticated} />
+          <AddToCollectionButton assetId={asset.id} assetTitle={asset.title} isAuthenticated={isAuthenticated} />
         </div>
       </div>
 
@@ -134,9 +134,13 @@ export function AssetCard({ asset, isAuthenticated = false }: { asset: AssetPrev
             href={`/users/${asset.creator_id}`}
             onClick={(e) => e.stopPropagation()}
             style={{ color: 'var(--text-secondary)' }}
-            className="truncate text-xs hover:underline"
+            className="flex min-w-0 items-center gap-1 truncate text-xs hover:underline"
           >
-            {asset.creator_display_name}
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="shrink-0">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+            <span className="truncate">{asset.creator_display_name}</span>
           </Link>
         )}
         <StarButton

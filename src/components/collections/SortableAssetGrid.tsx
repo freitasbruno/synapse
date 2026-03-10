@@ -43,10 +43,12 @@ function SortableItem({
   asset,
   collectionId,
   onRemove,
+  isAuthenticated,
 }: {
   asset: AssetRow
   collectionId: string
   onRemove: (assetId: string) => void
+  isAuthenticated: boolean
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: asset.id })
@@ -94,7 +96,7 @@ function SortableItem({
         ✕
       </button>
 
-      <AssetCard asset={asset as unknown as AssetPreview} isAuthenticated />
+      <AssetCard asset={asset as unknown as AssetPreview} isAuthenticated={isAuthenticated} />
     </div>
   )
 }
@@ -105,9 +107,10 @@ interface Props {
   initialAssets: AssetRow[]
   collectionId: string
   isOwner: boolean
+  isAuthenticated: boolean
 }
 
-export function SortableAssetGrid({ initialAssets, collectionId, isOwner }: Props) {
+export function SortableAssetGrid({ initialAssets, collectionId, isOwner, isAuthenticated }: Props) {
   const [assets, setAssets] = useState(initialAssets)
 
   const sensors = useSensors(
@@ -152,7 +155,7 @@ export function SortableAssetGrid({ initialAssets, collectionId, isOwner }: Prop
     return (
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {assets.map((asset) => (
-          <AssetCard key={asset.id} asset={asset as unknown as AssetPreview} isAuthenticated />
+          <AssetCard key={asset.id} asset={asset as unknown as AssetPreview} isAuthenticated={isAuthenticated} />
         ))}
       </div>
     )
@@ -172,6 +175,7 @@ export function SortableAssetGrid({ initialAssets, collectionId, isOwner }: Prop
               asset={asset}
               collectionId={collectionId}
               onRemove={handleRemove}
+              isAuthenticated={isAuthenticated}
             />
           ))}
         </div>

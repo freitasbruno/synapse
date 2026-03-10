@@ -17,55 +17,13 @@ export interface CollectionWithAssets extends CollectionPreview {
 export interface UserCollectionOption {
   id: string
   title: string
+  asset_count: number
   contains: boolean
 }
 
 // ─── queries ──────────────────────────────────────────────────────────────────
 
-export async function getPublicCollections(
-  sort: 'popular' | 'newest' = 'popular',
-): Promise<CollectionPreview[]> {
-  const supabase = await createClient()
-
-  const { data, error } = await supabase
-    .from('collections')
-    .select(`
-      *,
-      users!user_id ( display_name ),
-      collection_assets ( id )
-    `)
-    .eq('visibility', 'public')
-    .order(sort === 'popular' ? 'star_count' : 'created_at', { ascending: false })
-
-  if (error) {
-    console.error('[getPublicCollections] Supabase error:', error.message)
-    return []
-  }
-
-  return (data ?? []).map((row) => {
-    const r = row as typeof row & {
-      users: { display_name: string } | null
-      collection_assets: { id: string }[]
-    }
-    return {
-      id: r.id,
-      user_id: r.user_id,
-      title: r.title,
-      description: r.description,
-      visibility: r.visibility as 'public' | 'private',
-      star_count: r.star_count,
-      created_at: r.created_at,
-      updated_at: r.updated_at,
-      creator_name: r.users?.display_name ?? 'Unknown',
-      asset_count: r.collection_assets?.length ?? 0,
-    }
-  })
-}
-
-export async function getCollectionById(
-  id: string,
-  currentUserId?: string,
-): Promise<CollectionPreview | null> {
+export async function getCollectionById(id: string): Promise<CollectionPreview | null> {
   const supabase = await createClient()
 
   const { data, error } = await supabase
@@ -90,17 +48,11 @@ export async function getCollectionById(
     collection_assets: { id: string }[]
   }
 
-  // Block private collections from non-owners
-  if (r.visibility === 'private' && r.user_id !== currentUserId) {
-    return null
-  }
-
   return {
     id: r.id,
     user_id: r.user_id,
     title: r.title,
     description: r.description,
-    visibility: r.visibility as 'public' | 'private',
     star_count: r.star_count,
     created_at: r.created_at,
     updated_at: r.updated_at,
@@ -158,7 +110,6 @@ export async function getCollectionsByUser(userId: string): Promise<CollectionPr
       user_id: r.user_id,
       title: r.title,
       description: r.description,
-      visibility: r.visibility as 'public' | 'private',
       star_count: r.star_count,
       created_at: r.created_at,
       updated_at: r.updated_at,
@@ -193,10 +144,12 @@ export async function getUserCollectionsForAsset(
     const r = row as typeof row & {
       collection_assets: { asset_id: string }[] | null
     }
+    const allEntries = r.collection_assets ?? []
     return {
       id: r.id,
       title: r.title,
-      contains: (r.collection_assets ?? []).some((ca) => ca.asset_id === assetId),
+      asset_count: allEntries.length,
+      contains: allEntries.some((ca) => ca.asset_id === assetId),
     }
   })
 }
@@ -205,7 +158,6 @@ export async function createCollection(data: {
   userId: string
   title: string
   description?: string | null
-  visibility: 'public' | 'private'
 }): Promise<CollectionRow | null> {
   const supabase = await createClient()
 
@@ -215,7 +167,6 @@ export async function createCollection(data: {
       user_id: data.userId,
       title: data.title,
       description: data.description ?? null,
-      visibility: data.visibility,
     })
     .select('*')
     .single()
@@ -230,7 +181,7 @@ export async function createCollection(data: {
 
 export async function updateCollection(
   id: string,
-  data: Partial<Pick<CollectionRow, 'title' | 'description' | 'visibility'>>,
+  data: Partial<Pick<CollectionRow, 'title' | 'description'>>,
 ): Promise<{ error: string | null }> {
   const supabase = await createClient()
 

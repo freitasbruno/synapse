@@ -1,4 +1,4 @@
-import { notFound } from 'next/navigation'
+import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { Header } from '@/components/layout/Header'
 import { getCurrentUser } from '@/lib/auth/session'
@@ -16,15 +16,20 @@ export default async function CollectionDetailPage({
   const { id } = await params
   const user = await getCurrentUser()
 
-  const [collection, assets] = await Promise.all([
-    getCollectionById(id, user?.id),
-    getCollectionAssets(id),
-  ])
+  const collection = await getCollectionById(id)
 
-  if (!collection) notFound()
+  // Silently redirect if not found or access denied (RLS blocks non-owners/non-managers)
+  if (!collection) redirect('/')
 
   const isOwner = user?.id === collection.user_id
+  const isManager = user?.role === 'manager'
+
+  // Only owner and managers may view
+  if (!isOwner && !isManager) redirect('/')
+
   const isAuthenticated = Boolean(user)
+
+  const assets = await getCollectionAssets(id)
 
   // Get initial star status for authenticated users
   let initialStarred = false
@@ -46,11 +51,11 @@ export default async function CollectionDetailPage({
 
         {/* Back link */}
         <Link
-          href="/collections"
+          href="/profile#collections"
           style={{ color: 'var(--text-secondary)' }}
           className="inline-flex items-center gap-1.5 text-sm transition-colors hover:[color:var(--text-primary)]"
         >
-          ← Collections
+          ← My Collections
         </Link>
 
         {/* Collection header */}
@@ -78,19 +83,6 @@ export default async function CollectionDetailPage({
                 style={{ color: 'var(--text-secondary)' }}
                 className="mt-4 flex flex-wrap items-center gap-4 text-sm"
               >
-                <span>by {collection.creator_name}</span>
-
-                <span
-                  className="rounded-full px-2 py-0.5 text-xs font-medium"
-                  style={
-                    collection.visibility === 'public'
-                      ? { backgroundColor: 'rgba(34,197,94,0.12)', color: '#22c55e' }
-                      : { backgroundColor: 'rgba(99,102,241,0.12)', color: '#818cf8' }
-                  }
-                >
-                  {collection.visibility === 'public' ? '🌐 Public' : '🔒 Private'}
-                </span>
-
                 <span>{collection.asset_count} {collection.asset_count === 1 ? 'asset' : 'assets'}</span>
 
                 <CollectionStarButton
@@ -109,7 +101,6 @@ export default async function CollectionDetailPage({
               collectionId={collection.id}
               initialTitle={collection.title}
               initialDescription={collection.description}
-              initialVisibility={collection.visibility}
             />
           )}
         </div>
@@ -139,6 +130,7 @@ export default async function CollectionDetailPage({
               initialAssets={assets}
               collectionId={collection.id}
               isOwner={isOwner}
+              isAuthenticated={isAuthenticated}
             />
           )}
         </div>

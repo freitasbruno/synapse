@@ -7,20 +7,17 @@ interface Props {
   collectionId: string
   initialTitle: string
   initialDescription: string | null
-  initialVisibility: 'public' | 'private'
 }
 
 export function CollectionHeaderActions({
   collectionId,
   initialTitle,
   initialDescription,
-  initialVisibility,
 }: Props) {
   const router = useRouter()
   const [editing, setEditing] = useState(false)
   const [title, setTitle] = useState(initialTitle)
   const [description, setDescription] = useState(initialDescription ?? '')
-  const [visibility, setVisibility] = useState<'public' | 'private'>(initialVisibility)
   const [saving, setSaving] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [deleting, setDeleting] = useState(false)
@@ -33,7 +30,7 @@ export function CollectionHeaderActions({
       await fetch(`/api/collections/${collectionId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title: title.trim(), description, visibility }),
+        body: JSON.stringify({ title: title.trim(), description }),
       })
       setEditing(false)
       router.refresh()
@@ -45,7 +42,7 @@ export function CollectionHeaderActions({
   async function handleDelete() {
     setDeleting(true)
     await fetch(`/api/collections/${collectionId}`, { method: 'DELETE' })
-    router.push('/collections')
+    router.push('/profile#collections')
   }
 
   if (editing) {
@@ -78,23 +75,6 @@ export function CollectionHeaderActions({
           }}
         />
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1 rounded-lg border p-0.5" style={{ borderColor: 'var(--bg-border)' }}>
-            {(['public', 'private'] as const).map((v) => (
-              <button
-                key={v}
-                type="button"
-                onClick={() => setVisibility(v)}
-                className="rounded px-2.5 py-1 text-xs font-medium transition-colors"
-                style={
-                  visibility === v
-                    ? { backgroundColor: 'var(--accent)', color: '#fff' }
-                    : { color: 'var(--text-secondary)' }
-                }
-              >
-                {v === 'public' ? '🌐 Public' : '🔒 Private'}
-              </button>
-            ))}
-          </div>
           <div className="flex-1" />
           <button
             type="button"
