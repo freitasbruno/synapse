@@ -74,6 +74,11 @@ export interface Database {
           created_at: string
           updated_at: string
           last_published_at: string | null
+          is_agent_generated: boolean
+          agent_run_id: string | null
+          agent_candidate_id: string | null
+          source_url: string | null
+          agent_quality_score: number | null
         }
         Insert: {
           id?: string
@@ -97,6 +102,11 @@ export interface Database {
           created_at?: string
           updated_at?: string
           last_published_at?: string | null
+          is_agent_generated?: boolean
+          agent_run_id?: string | null
+          agent_candidate_id?: string | null
+          source_url?: string | null
+          agent_quality_score?: number | null
         }
         Update: {
           id?: string
@@ -120,6 +130,11 @@ export interface Database {
           created_at?: string
           updated_at?: string
           last_published_at?: string | null
+          is_agent_generated?: boolean
+          agent_run_id?: string | null
+          agent_candidate_id?: string | null
+          source_url?: string | null
+          agent_quality_score?: number | null
         }
         Relationships: []
       }
@@ -339,6 +354,120 @@ export interface Database {
         }
         Relationships: []
       }
+      agent_runs: {
+        Row: {
+          id: string
+          domain: string
+          focus_notes: string | null
+          max_assets: number
+          status: 'pending' | 'searching' | 'evaluating' | 'deduplicating' | 'drafting' | 'completed' | 'failed'
+          current_step_detail: string | null
+          assets_found: number
+          assets_evaluated: number
+          assets_passed_evaluation: number
+          assets_passed_deduplication: number
+          assets_drafted: number
+          assets_approved: number
+          assets_rejected: number
+          error_message: string | null
+          triggered_by: string
+          started_at: string
+          completed_at: string | null
+        }
+        Insert: {
+          id?: string
+          domain: string
+          focus_notes?: string | null
+          max_assets?: number
+          status?: 'pending' | 'searching' | 'evaluating' | 'deduplicating' | 'drafting' | 'completed' | 'failed'
+          current_step_detail?: string | null
+          assets_found?: number
+          assets_evaluated?: number
+          assets_passed_evaluation?: number
+          assets_passed_deduplication?: number
+          assets_drafted?: number
+          assets_approved?: number
+          assets_rejected?: number
+          error_message?: string | null
+          triggered_by: string
+          started_at?: string
+          completed_at?: string | null
+        }
+        Update: {
+          id?: string
+          domain?: string
+          focus_notes?: string | null
+          max_assets?: number
+          status?: 'pending' | 'searching' | 'evaluating' | 'deduplicating' | 'drafting' | 'completed' | 'failed'
+          current_step_detail?: string | null
+          assets_found?: number
+          assets_evaluated?: number
+          assets_passed_evaluation?: number
+          assets_passed_deduplication?: number
+          assets_drafted?: number
+          assets_approved?: number
+          assets_rejected?: number
+          error_message?: string | null
+          triggered_by?: string
+          started_at?: string
+          completed_at?: string | null
+        }
+        Relationships: []
+      }
+      agent_candidates: {
+        Row: {
+          id: string
+          run_id: string
+          title: string
+          summary: string | null
+          source_url: string | null
+          raw_content: string | null
+          evaluation_score: number | null
+          evaluation_reasoning: string | null
+          passed_evaluation: boolean | null
+          similarity_score: number | null
+          passed_deduplication: boolean | null
+          nearest_asset_id: string | null
+          drafted_asset_id: string | null
+          status: 'found' | 'evaluated' | 'deduplicated' | 'drafted' | 'skipped'
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          run_id: string
+          title: string
+          summary?: string | null
+          source_url?: string | null
+          raw_content?: string | null
+          evaluation_score?: number | null
+          evaluation_reasoning?: string | null
+          passed_evaluation?: boolean | null
+          similarity_score?: number | null
+          passed_deduplication?: boolean | null
+          nearest_asset_id?: string | null
+          drafted_asset_id?: string | null
+          status?: 'found' | 'evaluated' | 'deduplicated' | 'drafted' | 'skipped'
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          run_id?: string
+          title?: string
+          summary?: string | null
+          source_url?: string | null
+          raw_content?: string | null
+          evaluation_score?: number | null
+          evaluation_reasoning?: string | null
+          passed_evaluation?: boolean | null
+          similarity_score?: number | null
+          passed_deduplication?: boolean | null
+          nearest_asset_id?: string | null
+          drafted_asset_id?: string | null
+          status?: 'found' | 'evaluated' | 'deduplicated' | 'drafted' | 'skipped'
+          created_at?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           id: string
@@ -443,6 +572,9 @@ export type CollectionAssetRow = Database['public']['Tables']['collection_assets
 export type CollectionStarRow = Database['public']['Tables']['collection_stars']['Row']
 export type FollowRow = Database['public']['Tables']['follows']['Row']
 export type NotificationRow = Database['public']['Tables']['notifications']['Row']
+
+export type AgentRunRow = Database['public']['Tables']['agent_runs']['Row']
+export type AgentCandidateRow = Database['public']['Tables']['agent_candidates']['Row']
 
 export type NotificationType = NotificationRow['type']
 
