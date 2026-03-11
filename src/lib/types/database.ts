@@ -554,6 +554,10 @@ export interface Database {
         Args: { p_user_id: string }
         Returns: undefined
       }
+      match_assets_by_embedding: {
+        Args: { query_embedding: string; match_count?: number }
+        Returns: Array<{ id: string; title: string; similarity: number }>
+      }
     }
     Enums: Record<string, never>
   }
