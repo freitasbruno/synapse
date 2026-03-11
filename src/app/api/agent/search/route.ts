@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { generateText } from 'ai'
-import { createGoogleGenerativeAI } from '@ai-sdk/google'
+import { createGoogleGenerativeAI, googleTools } from '@ai-sdk/google'
 import { getCurrentUser } from '@/lib/auth/session'
 import { getAgentRun, updateAgentRun, createAgentCandidate } from '@/lib/data/agent'
 
@@ -61,7 +61,8 @@ export async function POST(request: NextRequest) {
       let searchResult = ''
       try {
         const { text } = await generateText({
-          model: google(GEMINI_MODEL, { useSearchGrounding: true }),
+          model: google(GEMINI_MODEL),
+          tools: { google_search: googleTools.googleSearch() },
           prompt: angles[i],
         })
         searchResult = text
