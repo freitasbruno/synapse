@@ -9,6 +9,7 @@ import { AIStatusIndicator } from './AIStatusIndicator'
 import { PromptEditor } from './PromptEditor'
 import { PromptAssistant } from './PromptAssistant'
 import { AttachmentUploader } from '@/components/attachments/AttachmentUploader'
+import { AttachmentList } from '@/components/attachments/AttachmentList'
 import { assembleAssetContent } from '@/lib/utils/content'
 import type { AssetRow } from '@/lib/data/assets'
 import type { EditorBlock } from './SequenceBuilder'
@@ -597,15 +598,23 @@ export function AssetEditor({ initialData, mode, creatorId, initialAttachments }
         </div>
       )}
 
-      {/* ── Attachments (shown once the asset exists in DB) ── */}
+      {/* ── Attachments ── */}
       {isInserted ? (
         <>
           <hr style={{ borderColor: 'var(--bg-border)' }} className="my-6" />
-          <AttachmentUploader
-            assetId={assetId}
-            attachments={attachments}
-            onAttachmentsChange={setAttachments}
-          />
+          {viewMode === 'edit' ? (
+            <AttachmentUploader
+              assetId={assetId}
+              attachments={attachments}
+              onAttachmentsChange={setAttachments}
+            />
+          ) : (
+            <AttachmentList
+              assetId={assetId}
+              attachments={attachments}
+              isAuthenticated={true}
+            />
+          )}
         </>
       ) : (
         <p className="mt-6 text-xs" style={{ color: 'var(--text-secondary)' }}>
