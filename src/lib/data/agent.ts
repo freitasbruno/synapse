@@ -146,6 +146,7 @@ export interface AgentDraftAsset extends AssetRow {
   source_url: string | null
   agent_candidate_id: string | null
   agent_run_id: string | null
+  manually_drafted?: boolean
 }
 
 export async function getAgentDraftAssets(runId: string): Promise<AgentDraftAsset[]> {
@@ -181,5 +182,30 @@ export async function getAllAgentDraftAssets(): Promise<AgentDraftAsset[]> {
     return []
   }
 
-  return (data ?? []) as AgentDraftAsset[]
+  const assets = (data ?? []) as AgentDraftAsset[]
+
+  // Merge manually_drafted flag from associated candidates
+  const candidateIds = assets.map((a) => a.agent_candidate_id).filter(Boolean) as string[]
+  if (candidateIds.length > 0) {
+    const { data: candidates } = await supabase
+      .from('agent_candidates')
+      .select('id, manually_drafted')
+      .in('id', candidateIds)
+
+    if (candidates) {
+      const map = new Map(
+        (candidates as Array<{ id: string; manually_drafted: boolean }>).map((c) => [
+          c.id,
+          c.manually_drafted,
+        ]),
+      )
+      assets.forEach((a) => {
+        if (a.agent_candidate_id) {
+          a.manually_drafted = map.get(a.agent_candidate_id) ?? false
+        }
+      })
+    }
+  }
+
+  return assets
 }

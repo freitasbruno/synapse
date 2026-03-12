@@ -69,6 +69,14 @@ function PreviewModal({ asset, runs, onClose }: { asset: AgentDraftAsset; runs: 
               </span>
               <ScoreBadge score={asset.agent_quality_score} />
               <span style={{ color: 'var(--text-secondary)' }} className="text-xs">{domain}</span>
+              {asset.manually_drafted && (
+                <span
+                  className="rounded-full px-1.5 py-0.5 text-[10px] font-medium"
+                  style={{ backgroundColor: 'rgb(99 102 241 / 0.15)', color: '#a5b4fc' }}
+                >
+                  Manually drafted
+                </span>
+              )}
             </div>
             <h2 style={{ color: 'var(--text-primary)' }} className="mt-1.5 text-base font-bold leading-snug">
               {asset.title}
@@ -402,9 +410,19 @@ export function ReviewQueue({ initialAssets, runs, domainOptions }: Props) {
 
             {/* Title */}
             <div className="min-w-0">
-              <p className="truncate text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
-                {asset.title}
-              </p>
+              <div className="flex items-center gap-1.5">
+                <p className="truncate text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
+                  {asset.title}
+                </p>
+                {asset.manually_drafted && (
+                  <span
+                    className="shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-medium"
+                    style={{ backgroundColor: 'rgb(99 102 241 / 0.15)', color: '#a5b4fc' }}
+                  >
+                    Manual
+                  </span>
+                )}
+              </div>
               {asset.description && (
                 <p className="line-clamp-1 text-xs" style={{ color: 'var(--text-secondary)' }}>{asset.description}</p>
               )}

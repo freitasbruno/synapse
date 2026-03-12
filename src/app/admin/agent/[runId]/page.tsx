@@ -99,7 +99,7 @@ export default async function RunPage({ params }: { params: Promise<{ runId: str
       </div>
 
       {/* Tabbed inspector */}
-      <RunInspector candidates={candidates} draftAssets={draftAssets} runId={runId} />
+      <RunInspector candidates={candidates} draftAssets={draftAssets} runId={runId} initialDraftedCount={run.assets_drafted} />
     </div>
   )
 }

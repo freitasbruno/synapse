@@ -429,6 +429,7 @@ export interface Database {
           passed_deduplication: boolean | null
           nearest_asset_id: string | null
           drafted_asset_id: string | null
+          manually_drafted: boolean
           status: 'found' | 'evaluated' | 'deduplicated' | 'drafted' | 'skipped'
           created_at: string
         }
@@ -446,6 +447,7 @@ export interface Database {
           passed_deduplication?: boolean | null
           nearest_asset_id?: string | null
           drafted_asset_id?: string | null
+          manually_drafted?: boolean
           status?: 'found' | 'evaluated' | 'deduplicated' | 'drafted' | 'skipped'
           created_at?: string
         }
@@ -463,6 +465,7 @@ export interface Database {
           passed_deduplication?: boolean | null
           nearest_asset_id?: string | null
           drafted_asset_id?: string | null
+          manually_drafted?: boolean
           status?: 'found' | 'evaluated' | 'deduplicated' | 'drafted' | 'skipped'
           created_at?: string
         }
