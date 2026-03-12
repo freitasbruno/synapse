@@ -3,6 +3,7 @@ import { generateText } from 'ai'
 import { createGoogleGenerativeAI } from '@ai-sdk/google'
 import { getCurrentUser } from '@/lib/auth/session'
 import { getAgentRun, updateAgentRun, getAgentCandidates, updateAgentCandidate } from '@/lib/data/agent'
+import { getSystemPromptWithVars } from '@/lib/ai/get-system-prompt'
 
 const google = createGoogleGenerativeAI({ apiKey: process.env.BITLAB_GEMINI_API_KEY })
 const GEMINI_MODEL = process.env.BITLAB_GEMINI_MODEL ?? 'gemini-2.0-flash'
@@ -20,20 +21,12 @@ async function evaluateCandidate(
   summary: string | null,
   sourceUrl: string | null,
 ): Promise<EvalResult | null> {
-  const prompt = `Rate this AI use case candidate on a scale of 0.0 to 1.0.
-
-Candidate title: ${title}
-Candidate summary: ${summary ?? 'N/A'}
-Source: ${sourceUrl ?? 'N/A'}
-
-Score on these criteria:
-- Specificity (0–0.25): Is this a concrete, specific use case or generic advice?
-- Actionability (0–0.25): Can someone use or implement this today?
-- Uniqueness (0–0.25): Is this genuinely novel or just another "use AI to write emails" example?
-- Domain fit (0–0.25): Is this clearly relevant to ${domain}?
-
-Respond ONLY with valid JSON:
-{"score": 0.72, "reasoning": "one sentence explanation"}`
+  const prompt = await getSystemPromptWithVars('agent_evaluate', {
+    domain,
+    title,
+    summary: summary ?? 'N/A',
+    source_url: sourceUrl ?? 'N/A',
+  })
 
   try {
     const { text } = await generateText({

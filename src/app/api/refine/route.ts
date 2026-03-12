@@ -3,24 +3,10 @@ import { generateText } from 'ai'
 import { createGoogleGenerativeAI } from '@ai-sdk/google'
 import { getCurrentUser } from '@/lib/auth/session'
 import { createClient } from '@/lib/supabase/server'
+import { getSystemPrompt } from '@/lib/ai/get-system-prompt'
 
 const google = createGoogleGenerativeAI({ apiKey: process.env.BITLAB_GEMINI_API_KEY })
 const GEMINI_MODEL = process.env.BITLAB_GEMINI_MODEL ?? 'gemini-2.0-flash'
-
-// ─── system prompt ────────────────────────────────────────────────────────────
-
-const SYSTEM_PROMPT = `You are a Technical Documentation Specialist for Synapse, an AI asset community portal. Your job is to review and improve content submitted by creators.
-
-When given a piece of text:
-- Fix grammatical errors and improve clarity
-- Ensure professional, concise tone
-- Preserve the original meaning and intent
-- For prompt-type assets: specifically improve instruction clarity, specificity, and effectiveness
-- For other asset types: focus on clear technical documentation style
-
-If the user provides a specific instruction, prioritise it above all other guidelines.
-
-Return ONLY the refined text — no explanations, no preamble, no "Here is the refined version:" prefix. Just the improved content.`
 
 // ─── types ────────────────────────────────────────────────────────────────────
 
@@ -62,9 +48,10 @@ export async function POST(request: NextRequest) {
   ].join('\n')
 
   try {
+    const systemPrompt = await getSystemPrompt('refine')
     const { text, usage } = await generateText({
       model: google(GEMINI_MODEL),
-      system: SYSTEM_PROMPT,
+      system: systemPrompt,
       prompt: userMessage,
     })
 

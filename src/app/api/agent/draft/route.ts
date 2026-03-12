@@ -5,6 +5,7 @@ import { getCurrentUser } from '@/lib/auth/session'
 import { createClient } from '@/lib/supabase/server'
 import { getAgentRun, updateAgentRun, getAgentCandidates, updateAgentCandidate } from '@/lib/data/agent'
 import type { Json } from '@/lib/types/database'
+import { getSystemPromptWithVars } from '@/lib/ai/get-system-prompt'
 
 const google = createGoogleGenerativeAI({ apiKey: process.env.BITLAB_GEMINI_API_KEY })
 const GEMINI_MODEL = process.env.BITLAB_GEMINI_MODEL ?? 'gemini-2.0-flash'
@@ -49,38 +50,12 @@ async function draftAsset(
   summary: string | null,
   sourceUrl: string | null,
 ): Promise<DraftedAsset | null> {
-  const prompt = `You are creating a structured asset for Synapse, an AI knowledge platform. Based on this use case, create a complete, professional asset entry.
-
-Domain: ${domain}
-Use case title: ${title}
-Use case summary: ${summary ?? 'N/A'}
-Source: ${sourceUrl ?? 'N/A'}
-
-Create a Synapse asset with this exact JSON structure:
-{
-  "title": "clear, specific title (max 80 chars)",
-  "type": "prompt | agent | app | workflow",
-  "description": "one sentence describing what this does (max 200 chars)",
-  "content": "if type is prompt: the actual prompt text ready to use. Otherwise null.",
-  "tags": ["tag1", "tag2", "tag3"],
-  "external_url": "source URL if it links to a live tool or resource, otherwise null",
-  "description_sequence": [
-    {
-      "type": "text",
-      "content": "## Overview\\n\\n[2-3 paragraphs explaining what this is, why it matters, and how to use it. Use markdown. Be specific and practical.]"
-    },
-    {
-      "type": "text",
-      "content": "## How to Use\\n\\n[Step by step instructions or usage guidance. Use markdown lists.]"
-    },
-    {
-      "type": "text",
-      "content": "## Example\\n\\n[A concrete example showing this in action. Use markdown code blocks if relevant.]"
-    }
-  ]
-}
-
-Return ONLY valid JSON. No preamble, no explanation.`
+  const prompt = await getSystemPromptWithVars('agent_draft', {
+    domain,
+    title,
+    summary: summary ?? 'N/A',
+    source_url: sourceUrl ?? 'N/A',
+  })
 
   try {
     const { text } = await generateText({

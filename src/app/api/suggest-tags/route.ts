@@ -4,23 +4,10 @@ import { createGoogleGenerativeAI } from '@ai-sdk/google'
 import { getCurrentUser } from '@/lib/auth/session'
 import { createClient } from '@/lib/supabase/server'
 import { getAllTags } from '@/lib/data/assets'
+import { getSystemPrompt } from '@/lib/ai/get-system-prompt'
 
 const google = createGoogleGenerativeAI({ apiKey: process.env.BITLAB_GEMINI_API_KEY })
 const GEMINI_MODEL = process.env.BITLAB_GEMINI_MODEL ?? 'gemini-2.0-flash'
-
-// ─── system prompt ────────────────────────────────────────────────────────────
-
-const SYSTEM_PROMPT = `You are a tagging assistant for Synapse, an AI asset community portal.
-Your job is to suggest relevant tags for an AI asset based on its title, type, and content.
-
-Rules:
-- Suggest exactly 3 to 5 tags
-- Tags must be lowercase, single words or short hyphenated phrases (e.g. "prompt-engineering", "python", "automation")
-- Prioritise tags that already exist in the platform's tag library when they are relevant
-- Only suggest new tags if no existing tag fits
-- Do not suggest tags already applied to this asset
-- Return ONLY a JSON array of strings, nothing else
-- Example: ["python", "automation", "llm", "prompt-engineering"]`
 
 // ─── types ────────────────────────────────────────────────────────────────────
 
@@ -61,9 +48,10 @@ export async function POST(request: NextRequest) {
   ].join('\n')
 
   try {
+    const systemPrompt = await getSystemPrompt('suggest_tags')
     const { text, usage } = await generateText({
       model: google(GEMINI_MODEL),
-      system: SYSTEM_PROMPT,
+      system: systemPrompt,
       prompt: userMessage,
     })
 

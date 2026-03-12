@@ -3,6 +3,7 @@ import { generateText } from 'ai'
 import { createGoogleGenerativeAI } from '@ai-sdk/google'
 import { getCurrentUser } from '@/lib/auth/session'
 import { getAgentRun, updateAgentRun, createAgentCandidate } from '@/lib/data/agent'
+import { getSystemPromptWithVars } from '@/lib/ai/get-system-prompt'
 
 const google = createGoogleGenerativeAI({ apiKey: process.env.BITLAB_GEMINI_API_KEY })
 const GEMINI_MODEL = process.env.BITLAB_GEMINI_MODEL ?? 'gemini-2.0-flash'
@@ -74,21 +75,10 @@ export async function POST(request: NextRequest) {
       if (!searchResult?.trim()) continue
 
       // Extract structured candidates from the search text
-      const extractionPrompt = `You are extracting distinct AI use cases from research text about ${run.domain}.
-
-Research text:
-${searchResult.slice(0, 8000)}
-
-Identify all distinct, concrete AI use cases mentioned. For each one extract:
-- title: A clear, specific name (max 100 chars)
-- summary: What it does and how it works (2-3 sentences)
-- source_url: The URL mentioned as the source, or null if not present
-- raw_content: The key relevant excerpt from the text
-
-Return ONLY a valid JSON array. No preamble, no explanation:
-[{"title":"...","summary":"...","source_url":"...","raw_content":"..."}]
-
-If no distinct use cases found, return: []`
+      const extractionPrompt = await getSystemPromptWithVars('agent_search_extraction', {
+        domain: run.domain,
+        search_result: searchResult.slice(0, 8000),
+      })
 
       let candidates: RawCandidate[] = []
       try {

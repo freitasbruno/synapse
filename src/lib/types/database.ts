@@ -510,6 +510,60 @@ export interface Database {
         }
         Relationships: []
       }
+      ai_system_prompts: {
+        Row: {
+          key: string
+          name: string
+          description: string
+          prompt: string
+          default_prompt: string
+          variables: Json
+          updated_at: string
+        }
+        Insert: {
+          key: string
+          name: string
+          description?: string
+          prompt: string
+          default_prompt: string
+          variables?: Json
+          updated_at?: string
+        }
+        Update: {
+          key?: string
+          name?: string
+          description?: string
+          prompt?: string
+          default_prompt?: string
+          variables?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      ai_system_prompt_versions: {
+        Row: {
+          id: string
+          prompt_key: string
+          prompt: string
+          changed_by: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          prompt_key: string
+          prompt: string
+          changed_by?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          prompt_key?: string
+          prompt?: string
+          changed_by?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           id: string
@@ -622,9 +676,13 @@ export type NotificationRow = Database['public']['Tables']['notifications']['Row
 export type AgentRunRow = Database['public']['Tables']['agent_runs']['Row']
 export type AgentCandidateRow = Database['public']['Tables']['agent_candidates']['Row']
 export type AssetAttachmentRow = Database['public']['Tables']['asset_attachments']['Row']
+export type AISystemPromptRow = Database['public']['Tables']['ai_system_prompts']['Row']
+export type AISystemPromptVersionRow = Database['public']['Tables']['ai_system_prompt_versions']['Row']
 
 // Standalone convenience type for asset attachments (mirrors the DB row)
 export type AssetAttachment = AssetAttachmentRow
+export type AISystemPrompt = AISystemPromptRow
+export type AISystemPromptVersion = AISystemPromptVersionRow
 
 export type NotificationType = NotificationRow['type']
 
