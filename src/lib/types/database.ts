@@ -468,6 +468,48 @@ export interface Database {
         }
         Relationships: []
       }
+      asset_attachments: {
+        Row: {
+          id: string
+          asset_id: string
+          uploader_id: string
+          filename: string
+          storage_path: string
+          mime_type: string
+          size_bytes: number
+          label: string | null
+          description: string | null
+          download_count: number
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          asset_id: string
+          uploader_id: string
+          filename: string
+          storage_path: string
+          mime_type: string
+          size_bytes: number
+          label?: string | null
+          description?: string | null
+          download_count?: number
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          asset_id?: string
+          uploader_id?: string
+          filename?: string
+          storage_path?: string
+          mime_type?: string
+          size_bytes?: number
+          label?: string | null
+          description?: string | null
+          download_count?: number
+          created_at?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           id: string
@@ -579,6 +621,10 @@ export type NotificationRow = Database['public']['Tables']['notifications']['Row
 
 export type AgentRunRow = Database['public']['Tables']['agent_runs']['Row']
 export type AgentCandidateRow = Database['public']['Tables']['agent_candidates']['Row']
+export type AssetAttachmentRow = Database['public']['Tables']['asset_attachments']['Row']
+
+// Standalone convenience type for asset attachments (mirrors the DB row)
+export type AssetAttachment = AssetAttachmentRow
 
 export type NotificationType = NotificationRow['type']
 

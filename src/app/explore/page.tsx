@@ -1,4 +1,5 @@
 import { Suspense } from 'react'
+import Link from 'next/link'
 import { Header } from '@/components/layout/Header'
 import { GalleryClient } from '@/components/gallery/GalleryClient'
 import { getPublishedAssets, getAllTags } from '@/lib/data/assets'
@@ -28,16 +29,27 @@ export default async function ExplorePage() {
     <>
       <Header />
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-        <div className="mb-8">
-          <h1
-            style={{ color: 'var(--text-primary)' }}
-            className="text-2xl font-bold tracking-tight"
-          >
-            Discovery Gallery
-          </h1>
-          <p style={{ color: 'var(--text-secondary)' }} className="mt-1 text-sm">
-            Explore community-built prompts, agents, apps, and workflows.
-          </p>
+        <div className="mb-8 flex items-start justify-between gap-4">
+          <div>
+            <h1
+              style={{ color: 'var(--text-primary)' }}
+              className="text-2xl font-bold tracking-tight"
+            >
+              Discovery Gallery
+            </h1>
+            <p style={{ color: 'var(--text-secondary)' }} className="mt-1 text-sm">
+              Explore community-built prompts, agents, apps, and workflows.
+            </p>
+          </div>
+          {isAuthenticated && (
+            <Link
+              href="/submit"
+              style={{ backgroundColor: 'var(--accent)', color: '#ffffff' }}
+              className="shrink-0 rounded-lg px-4 py-2 text-sm font-medium transition-opacity hover:opacity-90"
+            >
+              + New Asset
+            </Link>
+          )}
         </div>
 
         <Suspense fallback={<GalleryFallback />}>

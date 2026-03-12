@@ -190,7 +190,7 @@ export function AssetsTable({ initialAssets }: { initialAssets: AdminAsset[] }) 
                     aria-label="Select all"
                   />
                 </th>
-                {['Title', 'Type', 'Status', 'Visibility', 'Validated', 'Creator', 'Created', 'Stars', 'Actions'].map(
+                {['Title', 'Type', 'Status', 'Visibility', 'Validated', 'Creator', 'Created', 'Stars', '📎', 'Actions'].map(
                   (h) => (
                     <th
                       key={h}
@@ -206,7 +206,7 @@ export function AssetsTable({ initialAssets }: { initialAssets: AdminAsset[] }) 
             <tbody>
               {displayed.length === 0 && (
                 <tr>
-                  <td colSpan={10} className="py-12 text-center">
+                  <td colSpan={11} className="py-12 text-center">
                     <p style={{ color: 'var(--text-secondary)' }} className="text-sm">
                       No assets match the current filter
                     </p>
@@ -309,6 +309,22 @@ export function AssetsTable({ initialAssets }: { initialAssets: AdminAsset[] }) 
                       <span style={{ color: 'var(--text-secondary)' }} className="tabular-nums">
                         {asset.star_count}
                       </span>
+                    </td>
+
+                    {/* Attachments */}
+                    <td className="px-3 py-3">
+                      {asset.attachment_count > 0 ? (
+                        <Link
+                          href={`/asset/${asset.id}`}
+                          target="_blank"
+                          style={{ color: 'var(--text-secondary)' }}
+                          className="tabular-nums hover:underline"
+                        >
+                          📎 {asset.attachment_count}
+                        </Link>
+                      ) : (
+                        <span style={{ color: 'var(--text-secondary)' }}>—</span>
+                      )}
                     </td>
 
                     {/* Actions */}

@@ -23,6 +23,7 @@ export type AdminAsset = {
   creator_name: string
   created_at: string
   star_count: number
+  attachment_count: number
 }
 
 export type AdminOverviewStats = {
@@ -238,7 +239,7 @@ export async function getAdminAssets(): Promise<AdminAsset[]> {
 
   const { data: assets, error } = await supabase
     .from('assets')
-    .select('id, title, type, status, visibility, is_manager_validated, creator_id, created_at, star_count')
+    .select('id, title, type, status, visibility, is_manager_validated, creator_id, created_at, star_count, asset_attachments(id)')
     .order('created_at', { ascending: false })
 
   if (error || !assets) {
@@ -246,7 +247,7 @@ export async function getAdminAssets(): Promise<AdminAsset[]> {
     return []
   }
 
-  const rows = assets as Array<{
+  const rows = (assets as unknown) as Array<{
     id: string
     title: string
     type: 'prompt' | 'agent' | 'app' | 'workflow'
@@ -256,6 +257,7 @@ export async function getAdminAssets(): Promise<AdminAsset[]> {
     creator_id: string
     created_at: string
     star_count: number
+    asset_attachments: { id: string }[] | null
   }>
 
   const creatorIds = [...new Set(rows.map((a) => a.creator_id))]
@@ -270,7 +272,16 @@ export async function getAdminAssets(): Promise<AdminAsset[]> {
   const nameMap = new Map(creatorNames.map((u) => [u.id, u.display_name]))
 
   return rows.map((asset) => ({
-    ...asset,
+    id: asset.id,
+    title: asset.title,
+    type: asset.type,
+    status: asset.status,
+    visibility: asset.visibility,
+    is_manager_validated: asset.is_manager_validated,
+    creator_id: asset.creator_id,
+    created_at: asset.created_at,
+    star_count: asset.star_count,
     creator_name: nameMap.get(asset.creator_id) ?? 'Unknown',
+    attachment_count: asset.asset_attachments?.length ?? 0,
   }))
 }

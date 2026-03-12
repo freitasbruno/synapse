@@ -8,10 +8,11 @@ import { SequenceRenderer } from '@/components/asset/SequenceRenderer'
 import { AIStatusIndicator } from './AIStatusIndicator'
 import { PromptEditor } from './PromptEditor'
 import { PromptAssistant } from './PromptAssistant'
+import { AttachmentUploader } from '@/components/attachments/AttachmentUploader'
 import { assembleAssetContent } from '@/lib/utils/content'
 import type { AssetRow } from '@/lib/data/assets'
 import type { EditorBlock } from './SequenceBuilder'
-import type { Json } from '@/lib/types/database'
+import type { Json, AssetAttachment } from '@/lib/types/database'
 
 // ─── helpers ─────────────────────────────────────────────────────────────────
 
@@ -61,11 +62,12 @@ interface AssetEditorProps {
   initialData?: Partial<AssetRow>
   mode: 'create' | 'edit'
   creatorId: string
+  initialAttachments?: AssetAttachment[]
 }
 
 // ─── AssetEditor ──────────────────────────────────────────────────────────────
 
-export function AssetEditor({ initialData, mode, creatorId }: AssetEditorProps) {
+export function AssetEditor({ initialData, mode, creatorId, initialAttachments }: AssetEditorProps) {
   const router = useRouter()
 
   // Stable asset ID — generated once on mount for new assets
@@ -93,12 +95,19 @@ export function AssetEditor({ initialData, mode, creatorId }: AssetEditorProps) 
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
   const [publishErrors, setPublishErrors] = useState<string[]>([])
 
+  // ── Attachment state ──────────────────────────────────────────────────────
+  const [attachments, setAttachments] = useState<AssetAttachment[]>(
+    initialAttachments ?? [],
+  )
+
   // ── Tag suggestion state ───────────────────────────────────────────────────
   const [suggestedTags, setSuggestedTags] = useState<string[]>([])
   const [tagSuggestLoading, setTagSuggestLoading] = useState(false)
 
   // Track whether a DB row exists yet (true for edit, false for new create)
   const isInsertedRef = useRef(mode === 'edit')
+  // Mirror as state so the attachment uploader appears after first save
+  const [isInserted, setIsInserted] = useState(mode === 'edit')
 
   // Keep latest save function accessible from auto-save timer
   const saveAssetRef = useRef<((status: 'draft' | 'published') => Promise<boolean>) | null>(null)
@@ -161,6 +170,7 @@ export function AssetEditor({ initialData, mode, creatorId }: AssetEditorProps) 
         saveError = error.message
       } else {
         isInsertedRef.current = true
+        setIsInserted(true)
         // Update the URL bar without triggering a server re-render.
         // router.replace would re-fetch the edit page from the server, which
         // requires the "Owners can read own drafts" RLS policy to be in place
@@ -585,6 +595,22 @@ export function AssetEditor({ initialData, mode, creatorId }: AssetEditorProps) 
           </h2>
           <SequenceRenderer blocks={blocksToJson(blocks)} />
         </div>
+      )}
+
+      {/* ── Attachments (shown once the asset exists in DB) ── */}
+      {isInserted ? (
+        <>
+          <hr style={{ borderColor: 'var(--bg-border)' }} className="my-6" />
+          <AttachmentUploader
+            assetId={assetId}
+            attachments={attachments}
+            onAttachmentsChange={setAttachments}
+          />
+        </>
+      ) : (
+        <p className="mt-6 text-xs" style={{ color: 'var(--text-secondary)' }}>
+          💡 You can add attachments after saving.
+        </p>
       )}
     </div>
   )

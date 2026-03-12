@@ -9,9 +9,11 @@ import { StarButton } from '@/components/ui/StarButton'
 import { GoldBadge } from '@/components/ui/GoldBadge'
 import { ValidationToggle } from '@/components/ui/ValidationToggle'
 import { CommentSection } from '@/components/asset/CommentSection'
+import { AttachmentList } from '@/components/attachments/AttachmentList'
 import { formatCount } from '@/lib/utils/format'
 import { getAssetById, getStarStatus } from '@/lib/data/assets'
 import { getCommentsByAsset } from '@/lib/data/comments'
+import { getAssetAttachments } from '@/lib/data/attachments'
 import { getCurrentUser } from '@/lib/auth/session'
 import { getUserById } from '@/lib/data/users'
 import { AddToCollectionButton } from '@/components/collections/AddToCollectionButton'
@@ -67,10 +69,11 @@ export default async function AssetPage({
   const isManager = user?.role === 'manager'
   const canEdit = isManager || user?.id === asset.creator_id
 
-  const [comments, initialStarred, creator] = await Promise.all([
+  const [comments, initialStarred, creator, attachments] = await Promise.all([
     getCommentsByAsset(asset.id),
     user ? getStarStatus(asset.id, user.id) : Promise.resolve(false),
     asset.creator_id ? getUserById(asset.creator_id) : Promise.resolve(null),
+    getAssetAttachments(asset.id),
   ])
 
   return (
@@ -215,6 +218,18 @@ export default async function AssetPage({
         <div className="mt-8">
           <SequenceRenderer blocks={asset.description_sequence} />
         </div>
+
+        {/* ── Attachments ── */}
+        {attachments.length > 0 && (
+          <div className="mt-10">
+            <hr style={{ borderColor: 'var(--bg-border)' }} className="mb-6" />
+            <AttachmentList
+              assetId={asset.id}
+              attachments={attachments}
+              isAuthenticated={isAuthenticated}
+            />
+          </div>
+        )}
 
         {/* ── Comments ── */}
         <div className="mt-16">
