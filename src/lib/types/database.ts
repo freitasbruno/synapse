@@ -623,6 +623,10 @@ export interface Database {
         Args: { p_comment_id: string; p_asset_id: string }
         Returns: undefined
       }
+      delete_user_account: {
+        Args: { p_user_id: string }
+        Returns: undefined
+      }
       toggle_collection_star: {
         Args: { p_collection_id: string; p_user_id: string }
         Returns: { starred: boolean; star_count: number }

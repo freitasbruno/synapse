@@ -17,7 +17,7 @@ export function LandingFooter() {
         </div>
 
         {/* Right: nav links */}
-        <div className="flex items-center gap-5">
+        <div className="flex flex-wrap items-center gap-5">
           <Link
             href="/explore"
             className="text-sm transition-opacity hover:opacity-70"
@@ -25,14 +25,7 @@ export function LandingFooter() {
           >
             Explore
           </Link>
-          <Link
-            href="/roadmap"
-            className="text-sm transition-opacity hover:opacity-70"
-            style={{ color: 'rgba(255,255,255,0.45)' }}
-          >
-            Roadmap
-          </Link>
-          <Link
+<Link
             href="/auth/signin"
             className="text-sm transition-opacity hover:opacity-70"
             style={{ color: 'rgba(255,255,255,0.45)' }}
@@ -45,6 +38,20 @@ export function LandingFooter() {
             style={{ color: 'rgba(255,255,255,0.45)' }}
           >
             Sign Up
+          </Link>
+          <Link
+            href="/privacy"
+            className="text-sm transition-opacity hover:opacity-70"
+            style={{ color: 'rgba(255,255,255,0.45)' }}
+          >
+            Privacy
+          </Link>
+          <Link
+            href="/terms"
+            className="text-sm transition-opacity hover:opacity-70"
+            style={{ color: 'rgba(255,255,255,0.45)' }}
+          >
+            Terms
           </Link>
         </div>
       </div>

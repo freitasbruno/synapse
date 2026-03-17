@@ -56,6 +56,8 @@ export default function SignUpPage() {
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
+  const [agreedToTerms, setAgreedToTerms] = useState(false)
+  const [confirmedAge, setConfirmedAge] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -280,9 +282,56 @@ export default function SignUpPage() {
             />
           </div>
 
+          {/* Terms + Privacy consent */}
+          <label className="flex items-start gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              required
+              checked={agreedToTerms}
+              onChange={(e) => setAgreedToTerms(e.target.checked)}
+              className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer rounded accent-[var(--accent)]"
+            />
+            <span style={{ color: 'var(--text-secondary)' }} className="text-sm leading-relaxed">
+              I agree to the{' '}
+              <a
+                href="/terms"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: 'var(--accent)' }}
+                className="hover:underline"
+              >
+                Terms of Service
+              </a>
+              {' '}and{' '}
+              <a
+                href="/privacy"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: 'var(--accent)' }}
+                className="hover:underline"
+              >
+                Privacy Policy
+              </a>
+            </span>
+          </label>
+
+          {/* Age confirmation */}
+          <label className="flex items-start gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              required
+              checked={confirmedAge}
+              onChange={(e) => setConfirmedAge(e.target.checked)}
+              className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer rounded accent-[var(--accent)]"
+            />
+            <span style={{ color: 'var(--text-secondary)' }} className="text-sm leading-relaxed">
+              I confirm that I am 16 years of age or older
+            </span>
+          </label>
+
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || !agreedToTerms || !confirmedAge}
             style={{ backgroundColor: 'var(--accent)', color: '#ffffff' }}
             className="mt-2 w-full rounded-lg py-2.5 text-sm font-medium transition-opacity hover:opacity-90 disabled:opacity-60"
           >

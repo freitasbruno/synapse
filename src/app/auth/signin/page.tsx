@@ -234,6 +234,18 @@ export default function SignInPage() {
             Sign up →
           </Link>
         </p>
+
+        <p style={{ color: 'var(--text-secondary)' }} className="mt-4 text-center text-xs leading-relaxed">
+          By signing in, you agree to our{' '}
+          <Link href="/terms" style={{ color: 'var(--accent)' }} className="hover:underline">
+            Terms of Service
+          </Link>
+          {' '}and{' '}
+          <Link href="/privacy" style={{ color: 'var(--accent)' }} className="hover:underline">
+            Privacy Policy
+          </Link>
+          .
+        </p>
       </div>
     </div>
   )

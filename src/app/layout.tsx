@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono, Space_Grotesk } from 'next/font/google'
 import { ThemeProvider } from '@/components/providers/ThemeProvider'
+import { Footer } from '@/components/layout/Footer'
+import CookieConsent from '@/components/legal/CookieConsent'
 import './globals.css'
 
 const geistSans = Geist({
@@ -36,8 +38,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} ${spaceGrotesk.variable} antialiased`}>
-        <script type="text/javascript" src="https://embeds.iubenda.com/widgets/e98320b4-f6a2-49ba-9a79-4f27f22a8b1e.js"></script>
         <ThemeProvider>{children}</ThemeProvider>
+        <Footer />
+        <CookieConsent />
       </body>
     </html>
   )

@@ -4,6 +4,7 @@ import { Header } from '@/components/layout/Header'
 import { getCurrentUser } from '@/lib/auth/session'
 import { updateUser } from '@/lib/data/users'
 import { getFollowCounts } from '@/lib/data/follows'
+import { DeleteAccountSection } from '@/components/profile/DeleteAccountSection'
 
 // ─── helpers ─────────────────────────────────────────────────────────────────
 
@@ -193,6 +194,8 @@ export default async function ProfilePage() {
             </button>
           </form>
         </div>
+
+        <DeleteAccountSection />
 
       </main>
     </>
