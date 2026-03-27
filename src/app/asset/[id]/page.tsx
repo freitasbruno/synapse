@@ -67,7 +67,7 @@ export default async function AssetPage({
 
   const isAuthenticated = Boolean(user)
   const isManager = user?.role === 'manager'
-  const canEdit = isManager || user?.id === asset.creator_id
+  const canEdit = user?.id === asset.creator_id
 
   const [comments, initialStarred, creator, attachments] = await Promise.all([
     getCommentsByAsset(asset.id),
