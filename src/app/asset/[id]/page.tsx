@@ -18,6 +18,7 @@ import { getCurrentUser } from '@/lib/auth/session'
 import { getUserById } from '@/lib/data/users'
 import { AddToCollectionButton } from '@/components/collections/AddToCollectionButton'
 import { PromptContentBlock } from '@/components/asset/PromptContentBlock'
+import { EmbedCodeButton } from '@/components/asset/EmbedCodeButton'
 import type { AssetRow } from '@/lib/data/assets'
 
 // ─── badge configs ────────────────────────────────────────────────────────────
@@ -195,6 +196,11 @@ export default async function AssetPage({
           {/* Action buttons */}
           <div className="mt-5">
             <ActionButtons content={asset.content} externalUrl={asset.external_url} />
+          </div>
+
+          {/* Embed code (visible to everyone) */}
+          <div className="mt-3">
+            <EmbedCodeButton assetId={asset.id} />
           </div>
 
           {/* Divider */}

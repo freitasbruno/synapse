@@ -1,7 +1,13 @@
+'use client'
+
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { CookiePreferencesLink } from '@/components/legal/CookiePreferencesLink'
 
 export function Footer() {
+  const pathname = usePathname()
+  if (pathname?.startsWith('/embed')) return null
+
   return (
     <footer
       className="border-t px-4 py-6 text-center text-xs"

@@ -7,6 +7,15 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: '**' },
     ],
   },
+  async headers() {
+    return [
+      {
+        // Allow the embed pages to be framed from any origin. Other routes are unchanged.
+        source: '/embed/:path*',
+        headers: [{ key: 'Content-Security-Policy', value: 'frame-ancestors *' }],
+      },
+    ]
+  },
 };
 
 export default nextConfig;

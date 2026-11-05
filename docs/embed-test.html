@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Synapse embed test</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
+  label { display: block; margin-top: 1rem; font-size: 0.9rem; }
+  input { width: 100%; padding: 0.5rem; box-sizing: border-box; }
+  button { margin-top: 1rem; padding: 0.5rem 1rem; cursor: pointer; }
+  #out { margin-top: 1.5rem; }
+</style>
+</head>
+<body>
+<h1>Synapse embed test</h1>
+<label>Site address
+  <input id="site" type="text" value="http://localhost:3000">
+</label>
+<label>Asset ID
+  <input id="asset" type="text" placeholder="asset id">
+</label>
+<button id="go" type="button">Embed it</button>
+<div id="out"></div>
+<script>
+  document.getElementById('go').addEventListener('click', function () {
+    var site = document.getElementById('site').value.trim().replace(/\/+$/, '');
+    var id = encodeURIComponent(document.getElementById('asset').value.trim());
+    var out = document.getElementById('out');
+    out.innerHTML = '';
+    var frame = document.createElement('iframe');
+    frame.src = site + '/embed/asset/' + id;
+    frame.width = '100%';
+    frame.height = '400';
+    frame.frameBorder = '0';
+    out.appendChild(frame);
+  });
+</script>
+</body>
+</html>
